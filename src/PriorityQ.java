@@ -29,6 +29,10 @@ public class PriorityQ {
      * @return
      */
     private String extractMax() {
+        if( isEmpty() ) {
+            System.out.println("ERROR: Queue is empty");
+            return "Queue is empty";
+        }
         return null;
     }
 
@@ -38,6 +42,10 @@ public class PriorityQ {
      * @return
      */
     private int remove(int i) {
+        if( isEmpty() ) {
+            System.out.println("ERROR: Queue is empty");
+            return -1;
+        }
         return 0;
     }
 
@@ -45,6 +53,10 @@ public class PriorityQ {
      * Decrements the priority of the ith element by k
      */
     private int decrementPriority(int i, int k) {
+        if( isEmpty() ) {
+            System.out.println("ERROR: Queue is empty");
+            return -1;
+        }
         return 0;
     }
 
@@ -54,6 +66,10 @@ public class PriorityQ {
      * @return
      */
     private String[] priorityArray() {
+        if( isEmpty() ) {
+            System.out.println("ERROR: Queue is empty");
+            return null;
+        }
         return null;
     }
 
