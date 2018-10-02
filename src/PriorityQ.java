@@ -1,17 +1,19 @@
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Queue;
 
 public class PriorityQ {
 
-
-    ArrayList<String> maxHeap;
-    int size;
-    String min;
+    private ArrayList<String> heap;
+    private ArrayList<Integer> keys;
+    private String min;
     /**
      * Constructs an empty priority queue
      */
     public PriorityQ() {
-        maxHeap = new ArrayList<String>();
-        size = maxHeap.size();
+        heap = new ArrayList<String>();
+        keys = new ArrayList<Integer>();
     }
 
     /**
@@ -19,7 +21,13 @@ public class PriorityQ {
      * @param s
      * @param p
      */
-    private int add(String s, int p) {
+    public int add(String s, int p) {
+        heap.add(s);
+        keys.add(p);
+        if( !isEmpty() && heap.size() != 1 ){
+            System.out.println("SIZE: " + heap.size());
+            heapifyUp(heap.size()-1);
+        }
         return 0;
     }
 
@@ -28,7 +36,7 @@ public class PriorityQ {
      * @return
      */
     private String returnMax() {
-        return maxHeap.get(0);
+        return getValue(0);
     }
 
     /**
@@ -86,7 +94,7 @@ public class PriorityQ {
      * @return
      */
     private int getKey(int i) {
-        return 0;
+        return keys.get(i);
     }
 
     /**
@@ -95,7 +103,7 @@ public class PriorityQ {
      * @return
      */
     private String getValue(int i) {
-        return null;
+        return heap.get(i);
     }
 
     /**
@@ -103,6 +111,53 @@ public class PriorityQ {
      * @return
      */
     private boolean isEmpty() {
-        return true;
+        return heap.isEmpty() && keys.isEmpty();
+    }
+
+    /*
+    METHODS ADDED BY ME
+     */
+    private void heapifyUp(int i) {
+        int tempkey = keys.get(i);
+        String tempHeap = heap.get(i);
+        System.out.println("HeapifyUp: temp=" + tempkey );
+        System.out.println("Parent: " + getKey(parent(i)));
+        while( i > 0 && tempkey > getKey(parent(i))){
+            heap.set(i, getValue(parent(i)));
+            keys.set(i, getKey(parent(i)));
+            i = parent(i);
+        }
+        keys.set(i, tempkey);
+        heap.set(i, tempHeap);
+    }
+
+    private void heapifyDown(int i) {
+
+    }
+
+    private int parent(int i) {
+        return i/2;
+    }
+
+    /**
+     * Prints the heap array list
+     */
+    public void printHeap() {
+        System.out.print("HEAP: ");
+        for(String s : heap){
+            System.out.print(s + " ");
+        }
+        System.out.println();
+    }
+
+    /**
+     * Prints the keys array list
+     */
+    public void printKeys() {
+        System.out.print("KEYS: ");
+        for(int i : keys){
+            System.out.print(i + " ");
+        }
+        System.out.println();
     }
 }
