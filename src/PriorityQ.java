@@ -5,15 +5,17 @@ import java.util.Queue;
 
 public class PriorityQ {
 
-    private ArrayList<String> heap;
-    private ArrayList<Integer> keys;
+    private ArrayList<Node> heap;
+//    private ArrayList<String> heap;
+//    private ArrayList<Integer> keys;
     private String min;
     /**
      * Constructs an empty priority queue
      */
     public PriorityQ() {
-        heap = new ArrayList<String>();
-        keys = new ArrayList<Integer>();
+        heap = new ArrayList<Node>();
+//        heap = new ArrayList<String>();
+//        keys = new ArrayList<Integer>();
     }
 
     /**
@@ -24,8 +26,7 @@ public class PriorityQ {
     public int add(String s, int p) {
         heap.add(s);
         keys.add(p);
-        if( !isEmpty() && heap.size() != 1 ){
-            System.out.println("SIZE: " + heap.size());
+        if( !isEmpty() && heap.size() > 1 ){
             heapifyUp(heap.size()-1);
         }
         return 0;
@@ -110,33 +111,85 @@ public class PriorityQ {
      * Returns true if and only if the queue is empty
      * @return
      */
-    private boolean isEmpty() {
+    public boolean isEmpty() {
         return heap.isEmpty() && keys.isEmpty();
     }
 
     /*
     METHODS ADDED BY ME
      */
+
+    /**
+     * Recursively works up the tree checking to see
+     * if a child is greater than its parent. If it
+     * is they swap.
+     * @param i
+     */
     private void heapifyUp(int i) {
-        int tempkey = keys.get(i);
-        String tempHeap = heap.get(i);
-        System.out.println("HeapifyUp: temp=" + tempkey );
-        System.out.println("Parent: " + getKey(parent(i)));
-        while( i > 0 && tempkey > getKey(parent(i))){
-            heap.set(i, getValue(parent(i)));
-            keys.set(i, getKey(parent(i)));
-            i = parent(i);
+        int j;
+        if( i > 0 ){
+            j = parent(i);
+            if( getKey() > getKey(j) ){
+                swap(i, j);
+                heapifyUp(j);
+            }
         }
-        keys.set(i, tempkey);
-        heap.set(i, tempHeap);
+//        int tempKey = keys.get(i);
+//        String tempHeap = heap.get(i);
+//        while( i > 0 && tempKey > getKey(parent(i))){
+//            heap.set(i, getValue(parent(i)));
+//            keys.set(i, getKey(parent(i)));
+//            i = parent(i);
+//        }
+//        keys.set(i, tempKey);
+//        heap.set(i, tempHeap);
     }
 
+    /**
+     * Recursively works down the tree checking to see
+     * if a child is greater than its parent. If it
+     * is they swap.
+     * @param i
+     */
     private void heapifyDown(int i) {
-
+//        if( 2*i > n ){
+//
+//        }else if( 2*i < i ){
+//
+//        }
     }
 
+    /**
+     * Swaps two entries in the heap and keys arraylists
+     * @param i index of 1st
+     * @param j index of 2nd
+     */
+    private void swap(int i, int j) {
+        int tempKey = keys.get(i);
+        String tempHeap = heap.get(i);
+        heap.set(i, getValue(j));
+        keys.set(i, getKey(j));
+        heap.set(j, tempHeap);
+        keys.set(j, tempKey);
+    }
+
+    /**
+     * Returns the index of the parent
+     * @param i
+     * @return
+     */
     private int parent(int i) {
         return i/2;
+    }
+
+    /**
+     * Returns the index of the left or right child given and index
+     * @param i index of parent node
+     * @param j 0 = Left Child | 1 = Right Child
+     * @return
+     */
+    private int child(int i, int j) {
+        return 2*i+j;
     }
 
     /**
