@@ -1,20 +1,30 @@
 public class Node {
 
-    String string;
-    int priority;
+    private String value;
+    private int key;
 
-    public Node(String s, int priority) {
-        string = s;
-        this.priority = priority;
+    public Node(String value, int key) {
+        this.value = value;
+        this.key = key;
     }
 
     /**
-     * @return the string of this node
+     * @return the value of this node
      */
-    public String getString() { return string; }
+    public String getValue() { return value; }
 
     /**
-     * @return the priority of this node
+     * @return the key of this node
      */
-    public int getPriority() { return priority; }
+    public int getKey() { return key; }
+
+    /**
+     * Seta the value of this node
+     */
+    public void setValue(String value) { this.value = value; }
+
+    /**
+     * Sets the key of this node
+     */
+    public void setKey(int key) { this.key = key; }
 }

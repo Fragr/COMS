@@ -1,31 +1,22 @@
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Queue;
 
 public class PriorityQ {
 
     private ArrayList<Node> heap;
-//    private ArrayList<String> heap;
-//    private ArrayList<Integer> keys;
     private String min;
     /**
      * Constructs an empty priority queue
      */
     public PriorityQ() {
         heap = new ArrayList<Node>();
-//        heap = new ArrayList<String>();
-//        keys = new ArrayList<Integer>();
     }
 
     /**
-     * Adds a string s with priority p to the priority queue
-     * @param s
-     * @param p
+     * Adds a Node n to the priority queue
+     * @param n Node containing a string and priority
      */
-    public int add(String s, int p) {
-        heap.add(s);
-        keys.add(p);
+    public int add(Node n) {
+        heap.add(n);
         if( !isEmpty() && heap.size() > 1 ){
             heapifyUp(heap.size()-1);
         }
@@ -95,7 +86,7 @@ public class PriorityQ {
      * @return
      */
     private int getKey(int i) {
-        return keys.get(i);
+        return heap.get(i).getKey();
     }
 
     /**
@@ -104,7 +95,7 @@ public class PriorityQ {
      * @return
      */
     private String getValue(int i) {
-        return heap.get(i);
+        return heap.get(i).getValue();
     }
 
     /**
@@ -112,7 +103,7 @@ public class PriorityQ {
      * @return
      */
     public boolean isEmpty() {
-        return heap.isEmpty() && keys.isEmpty();
+        return heap.isEmpty();
     }
 
     /*
@@ -129,7 +120,7 @@ public class PriorityQ {
         int j;
         if( i > 0 ){
             j = parent(i);
-            if( getKey() > getKey(j) ){
+            if( getKey(i) > getKey(j) ){
                 swap(i, j);
                 heapifyUp(j);
             }
@@ -165,12 +156,9 @@ public class PriorityQ {
      * @param j index of 2nd
      */
     private void swap(int i, int j) {
-        int tempKey = keys.get(i);
-        String tempHeap = heap.get(i);
-        heap.set(i, getValue(j));
-        keys.set(i, getKey(j));
-        heap.set(j, tempHeap);
-        keys.set(j, tempKey);
+        Node tempNode = heap.get(i);
+        heap.set(i, heap.get(j));
+        heap.set(j, tempNode);
     }
 
     /**
@@ -195,21 +183,10 @@ public class PriorityQ {
     /**
      * Prints the heap array list
      */
-    public void printHeap() {
-        System.out.print("HEAP: ");
-        for(String s : heap){
-            System.out.print(s + " ");
-        }
-        System.out.println();
-    }
-
-    /**
-     * Prints the keys array list
-     */
-    public void printKeys() {
-        System.out.print("KEYS: ");
-        for(int i : keys){
-            System.out.print(i + " ");
+    public void print() {
+        System.out.println("{KEY, VALUE}");
+        for( Node n : heap) {
+            System.out.print( "{" + n.getKey() + ", " + n.getValue() + "} ");
         }
         System.out.println();
     }
