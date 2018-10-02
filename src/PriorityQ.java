@@ -1,10 +1,17 @@
+import java.util.ArrayList;
+
 public class PriorityQ {
 
+
+    ArrayList<String> maxHeap;
+    int size;
+    String min;
     /**
      * Constructs an empty priority queue
      */
     public PriorityQ() {
-
+        maxHeap = new ArrayList<String>();
+        size = maxHeap.size();
     }
 
     /**
@@ -21,7 +28,7 @@ public class PriorityQ {
      * @return
      */
     private String returnMax() {
-        return null;
+        return maxHeap.get(0);
     }
 
     /**
