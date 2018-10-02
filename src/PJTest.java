@@ -2,6 +2,7 @@ public class PJTest {
 
     public static void test() {
         PriorityQ heap = new PriorityQ();
+        System.out.println("{KEY, VALUE}");
         heap.add(new Node("A", 0));
         heap.print();
         heap.add(new Node("B", 1));
@@ -13,6 +14,8 @@ public class PJTest {
         heap.add(new Node("E", 4));
         heap.print();
         heap.add(new Node("F", 2));
+        heap.print();
+        heap.remove(0);
         heap.print();
 //        heap.add("A", 0);
 //        heap.printHeap();

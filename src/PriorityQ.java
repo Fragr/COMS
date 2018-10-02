@@ -3,7 +3,7 @@ import java.util.ArrayList;
 public class PriorityQ {
 
     private ArrayList<Node> heap;
-    private String min;
+
     /**
      * Constructs an empty priority queue
      */
@@ -16,9 +16,10 @@ public class PriorityQ {
      * @param n Node containing a string and priority
      */
     public int add(Node n) {
+        System.out.println("ADD NODE {" + n.getKey() + ", " + n.getValue() + "}");
         heap.add(n);
-        if( !isEmpty() && heap.size() > 1 ){
-            heapifyUp(heap.size()-1);
+        if( !isEmpty() && size() > 1 ){
+            heapifyUp(size()-1);
         }
         return 0;
     }
@@ -35,6 +36,7 @@ public class PriorityQ {
      * Returns a string whose priority is maximum and removes it from the priority queue
      * @return
      */
+    //TODO extractMax
     private String extractMax() {
         if( isEmpty() ) {
             System.out.println("ERROR: Queue is empty");
@@ -44,21 +46,29 @@ public class PriorityQ {
     }
 
     /**
-     * Removes the element from the priority queue whose array index is i
-     * @param i
+     * Removes the node from the priority queue whose array index is i
+     * @param i key of deleted node
      * @return
      */
-    private int remove(int i) {
+    public int remove(int i) {
         if( isEmpty() ) {
             System.out.println("ERROR: Queue is empty");
             return -1;
         }
-        return 0;
+        System.out.println("REMOVE NODE {" + heap.get(i).getKey() + ", " + heap.get(i).getValue() + "}");
+
+        int key = heap.get(i).getKey();
+        Node tempNode = heap.get(size()-1);
+        heap.remove(tempNode);
+        heap.set(i, tempNode);
+        heapifyDown(i);
+        return key;
     }
 
     /**
      * Decrements the priority of the ith element by k
      */
+    //TODO decrementPriority
     private int decrementPriority(int i, int k) {
         if( isEmpty() ) {
             System.out.println("ERROR: Queue is empty");
@@ -72,6 +82,7 @@ public class PriorityQ {
      * B[i] = key(A[i]) for all i in the array A used to implement the priority queue
      * @return
      */
+    //TODO priorityArray
     private String[] priorityArray() {
         if( isEmpty() ) {
             System.out.println("ERROR: Queue is empty");
@@ -143,11 +154,22 @@ public class PriorityQ {
      * @param i
      */
     private void heapifyDown(int i) {
-//        if( 2*i > n ){
-//
-//        }else if( 2*i < i ){
-//
-//        }
+        int j = 0;
+        int n = size();
+        if( 2*i > n ){
+            return;
+        }else if( 2*i < n ){
+            if( getKey(child(i, 0)) < getKey(child(i, 1)) )
+                j = 2*i;
+            else
+                j = 2*i+1;
+        }else if( 2*i == n){
+            j = 2*i;
+        }
+        if( getKey(j) < getKey(i) ){
+            swap(i, j);
+            heapifyDown(j);
+        }
     }
 
     /**
@@ -159,6 +181,13 @@ public class PriorityQ {
         Node tempNode = heap.get(i);
         heap.set(i, heap.get(j));
         heap.set(j, tempNode);
+    }
+
+    /**
+     * @return the size of the heap
+     */
+    public int size() {
+        return heap.size();
     }
 
     /**
@@ -184,7 +213,6 @@ public class PriorityQ {
      * Prints the heap array list
      */
     public void print() {
-        System.out.println("{KEY, VALUE}");
         for( Node n : heap) {
             System.out.print( "{" + n.getKey() + ", " + n.getValue() + "} ");
         }
