@@ -160,16 +160,18 @@ public class PriorityQ {
         int j = 0;
         int n = size();
         if( 2*i > n ){
+            System.out.println("2*i > n exiting");
             return;
         }else if( 2*i < n ){
-            if( getKey(child(i, 0)) < getKey(child(i, 1)) )
-                j = 2*i;
-            else
-                j = 2*i+1;
+            if( getKey(child(i, 0)) < getKey(child(i, 1)) ) {
+                j = 2 * i;
+            }else {
+                j = 2 * i + 1;
+            }
         }else if( 2*i == n){
             j = 2*i;
         }
-        if( getKey(j) < getKey(i) ){
+        if( getKey(j) > getKey(i) ){
             swap(i, j);
             heapifyDown(j);
         }
@@ -209,7 +211,7 @@ public class PriorityQ {
      * @return
      */
     private int child(int i, int j) {
-        return 2*i+j;
+        return 2*i+j+1;
     }
 
     /**
