@@ -36,13 +36,13 @@ public class PriorityQ {
      * Returns a string whose priority is maximum and removes it from the priority queue
      * @return
      */
-    //TODO extractMax
     private String extractMax() {
         if( isEmpty() ) {
             System.out.println("ERROR: Queue is empty");
             return "Queue is empty";
         }
-        return null;
+        remove(0);
+        return heap.get(0).getValue();
     }
 
     /**
@@ -82,13 +82,16 @@ public class PriorityQ {
      * B[i] = key(A[i]) for all i in the array A used to implement the priority queue
      * @return
      */
-    //TODO priorityArray
-    private String[] priorityArray() {
+    private int[] priorityArray() {
         if( isEmpty() ) {
             System.out.println("ERROR: Queue is empty");
             return null;
         }
-        return null;
+        int[] heapArray = new int[size()];
+        for( int i = 0; i < size(); i++ ){
+            heapArray[i] = heap.get(i).getKey();
+        }
+        return heapArray;
     }
 
     /**
