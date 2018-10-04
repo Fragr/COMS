@@ -58,10 +58,15 @@ public class PriorityQ {
         System.out.println("REMOVE NODE {" + heap.get(i).getKey() + ", " + heap.get(i).getValue() + "}");
 
         int key = heap.get(i).getKey();
-        Node tempNode = heap.get(size()-1);
-        heap.remove(tempNode);
-        heap.set(i, tempNode);
-        heapifyDown(i);
+
+        if( i == size()-1 ){
+            heap.remove(size()-1);
+        }else{
+            Node tempNode = heap.get(size()-1);
+            heap.remove(tempNode);
+            heap.set(i, tempNode);
+            heapifyDown(i);
+        }
         return key;
     }
 

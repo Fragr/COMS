@@ -17,6 +17,8 @@ public class PJTest {
         heap.print();
         heap.remove(0);
         heap.print();
+        heap.remove(heap.size()-1);
+        heap.print();
 //        heap.add("A", 0);
 //        heap.printHeap();
 //        heap.printKeys();
