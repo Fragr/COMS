@@ -65,8 +65,8 @@ public class PriorityQ {
             Node tempNode = heap.get(size()-1);
             heap.remove(tempNode);
             heap.set(i, tempNode);
-            heapifyDown(i);
         }
+        heapifyDown(i);
         return key;
     }
 

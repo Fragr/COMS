@@ -19,6 +19,8 @@ public class PJTest {
         heap.print();
         heap.remove(heap.size()-1);
         heap.print();
+        heap.add(new Node("G", 5));
+        heap.print();
 //        heap.add("A", 0);
 //        heap.printHeap();
 //        heap.printKeys();
