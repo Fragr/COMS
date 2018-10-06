@@ -16,6 +16,10 @@ public class PriorityQ {
      * @param n Node containing a string and priority
      */
     public int add(Node n) {
+        if( n.getKey() < 0 ) {
+            System.out.println("ERROR: Priority can not be negative!");
+            return -1;
+        }
         System.out.println("ADD NODE {" + n.getKey() + ", " + n.getValue() + "}");
         heap.add(n);
         if( !isEmpty() && size() > 1 ){
@@ -25,20 +29,18 @@ public class PriorityQ {
     }
 
     /**
-     * Returns a string whose priority is maximum
-     * @return
+     * @return a string whose priority is maximum
      */
-    private String returnMax() {
+    public String returnMax() {
         return getValue(0);
     }
 
     /**
-     * Returns a string whose priority is maximum and removes it from the priority queue
-     * @return
+     * @return a string whose priority is maximum and removes it from the priority queue
      */
-    private String extractMax() {
+    public String extractMax() {
         if( isEmpty() ) {
-            System.out.println("ERROR: Queue is empty");
+            System.out.println("ERROR: Queue is empty!");
             return "Queue is empty";
         }
         remove(0);
@@ -47,12 +49,12 @@ public class PriorityQ {
 
     /**
      * Removes the node from the priority queue whose array index is i
-     * @param i key of deleted node
-     * @return
+     * @param i index of node to delete
+     * @return the key of the removed node
      */
     public int remove(int i) {
         if( isEmpty() ) {
-            System.out.println("ERROR: Queue is empty");
+            System.out.println("ERROR: Queue is empty!");
             return -1;
         }
         System.out.println("REMOVE NODE {" + heap.get(i).getKey() + ", " + heap.get(i).getValue() + "}");
@@ -73,23 +75,22 @@ public class PriorityQ {
     /**
      * Decrements the priority of the ith element by k
      */
-    //TODO decrementPriority
-    private int decrementPriority(int i, int k) {
+    //TODO decrementPriority CHECK FOR NEGATIVE
+    public int decrementPriority(int i, int k) {
         if( isEmpty() ) {
-            System.out.println("ERROR: Queue is empty");
+            System.out.println("ERROR: Queue is empty!");
             return -1;
         }
         return 0;
     }
 
     /**
-     * Returns an array B with the following property:
+     * @return an array B with the following property:
      * B[i] = key(A[i]) for all i in the array A used to implement the priority queue
-     * @return
      */
-    private int[] priorityArray() {
+    public int[] priorityArray() {
         if( isEmpty() ) {
-            System.out.println("ERROR: Queue is empty");
+            System.out.println("ERROR: Queue is empty!");
             return null;
         }
         int[] heapArray = new int[size()];
@@ -100,40 +101,35 @@ public class PriorityQ {
     }
 
     /**
-     * Returns key(A[i]), where A is the array used to represent the priority queue
-     * @param i
-     * @return
+     * @param i index of node
+     * @return key(A[i]), where A is the array used to represent the priority queue
      */
-    private int getKey(int i) {
+    public int getKey(int i) {
         return heap.get(i).getKey();
     }
 
     /**
-     * Returns value(A[i]), where A is the array used to represent the priority queue
-     * @param i
-     * @return
+     * @param i index of node
+     * @return value(A[i]), where A is the array used to represent the priority queue
      */
-    private String getValue(int i) {
+    public String getValue(int i) {
         return heap.get(i).getValue();
     }
 
     /**
-     * Returns true if and only if the queue is empty
-     * @return
+     * @return true if and only if the queue is empty
      */
     public boolean isEmpty() {
         return heap.isEmpty();
     }
 
-    /*
-    METHODS ADDED BY ME
-     */
+    /*METHODS ADDED BY ME*/
 
     /**
      * Recursively works up the tree checking to see
      * if a child is greater than its parent. If it
      * is they swap.
-     * @param i
+     * @param i index of node
      */
     private void heapifyUp(int i) {
         int j;
@@ -159,7 +155,7 @@ public class PriorityQ {
      * Recursively works down the tree checking to see
      * if a child is greater than its parent. If it
      * is they swap.
-     * @param i
+     * @param i index of node
      */
     private void heapifyDown(int i) {
         int j = 0;
@@ -201,19 +197,17 @@ public class PriorityQ {
     }
 
     /**
-     * Returns the index of the parent
-     * @param i
-     * @return
+     * @param i index of node
+     * @return the index of the parent
      */
     private int parent(int i) {
         return i/2;
     }
 
     /**
-     * Returns the index of the left or right child given and index
      * @param i index of parent node
      * @param j 0 = Left Child | 1 = Right Child
-     * @return
+     * @return the index of the left or right child given and index
      */
     private int child(int i, int j) {
         return 2*i+j+1;
@@ -222,10 +216,22 @@ public class PriorityQ {
     /**
      * Prints the heap array list
      */
-    public void print() {
+    //TODO Change to private
+    void print() {
         for( Node n : heap) {
-            System.out.print( "{" + n.getKey() + ", " + n.getValue() + "} ");
+            System.out.print( "{" + n.getKey() + ", " + n.getValue() + "} " );
         }
         System.out.println();
+    }
+
+    /**
+     * Prints the child nodes of a given node
+     * @param i index of node
+     */
+    void printChildren(int i) {
+        System.out.println("The children of {" + heap.get(i).getKey() + ", " + heap.get(i).getValue() + "} are:" );
+
+        System.out.print( "{" + heap.get(child(i, 0)).getKey() + ", " + heap.get(child(i, 0)).getValue() + "} " );
+        System.out.println( "{" + heap.get(child(i, 1)).getKey() + ", " + heap.get(child(i, 1)).getValue() + "} " );
     }
 }
