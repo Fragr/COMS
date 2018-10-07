@@ -1,5 +1,5 @@
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -14,19 +14,42 @@ public class WikiCrawler {
      * @param topics arrays of strings representing keywords in a topic-list
      * @param output string representing the filename where the web graph over discovered pages are written
      */
-    public WikiCrawler(String seed, int max, String[] topics, String output) throws FileNotFoundException {
-        File testDoc = new File(".\\wiki_Iowa_State_University.html");
-        Scanner sc = new Scanner(testDoc).useDelimiter("<p>");
-        // OG ReGex - "<\\s*a[^>]*>(.*?)<\\s*/\\s*a>"
-        Pattern p = Pattern.compile("<a[^>]+href=[\\\"']?([\\\"'>]+)[\\\"']?[^>]*>(.+?)<\\/a>",  Pattern.CASE_INSENSITIVE|Pattern.DOTALL);
+    public WikiCrawler(String seed, int max, String[] topics, String output) throws IOException {
+        URL url = new URL(BASE_URL+"/wiki/Physics");
+        InputStream is = url.openStream();
+        BufferedReader br = new BufferedReader(new InputStreamReader(is));
+        String line;
 
-        while(sc.hasNextLine()){
-            String line = sc.nextLine();
-            Matcher m = p.matcher(line);
-            while(m.find()){
-                System.out.println(m.group(0));
+        // ((https?|ftp|gopher|telnet|file):((//)|(\\))+[\w\d:#@%/;$()~_?\+-=\\\.&]*)
+
+        //TODO Make sure the link is inside <p> somehow
+
+        Pattern urlPattern = Pattern.compile(
+                "href=\"([^\"]*)\"",
+                Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
+
+        while((line = br.readLine()) != null){
+            Matcher matcher = urlPattern.matcher(line);
+            while(matcher.find()){
+                if(matcher.group(0).contains("%") || matcher.group(0).contains("php?"));
+                else System.out.println(matcher.group(0).replace("href=\"", "").replace("\"", "").replace("https://", ""));
+//                System.out.println(matcher.group(0));
             }
         }
+
+
+
+//        File testDoc = new File(".\\wiki_Iowa_State_University.html");
+//        Scanner sc = new Scanner(testDoc).useDelimiter("<p>");
+//        // OG ReGex - "<\\s*a[^>]*>(.*?)<\\s*/\\s*a>"
+//        Pattern p = Pattern.compile("<a[^>]+href=[\\\"']?([\\\"'>]+)[\\\"']?[^>]*>(.+?)<\\/a>",  Pattern.CASE_INSENSITIVE|Pattern.DOTALL);
+//
+//        while(sc.hasNextLine()){
+//            line = sc.nextLine();
+//            Matcher m = p.matcher(line);
+//
+//        }
+        br.close();
     }
 
     /**
