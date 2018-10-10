@@ -6,8 +6,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class WikiCrawler {
-    static final String BASE_URL = "https://en.wikipedia.org";
-    String seed = "";
+//    static final String BASE_URL = "https://en.wikipedia.org";
+    static final String BASE_URL = "http://web.cs.iastate.edu/~pavan";
+    String seed;
+    // Count is the current count of considered pages.
+    int count = 0;
     int max;
     String[]topics;
     String output;
@@ -26,7 +29,7 @@ public class WikiCrawler {
         this.output = output;
 
         //TODO Implement Crawler
-//        System.out.println(extractLinks("/wiki/Physics")); //For testing specific pages
+//        System.out.println(extractLinks("/wiki/A.html")); //For testing specific pages
     }
 
 
@@ -37,6 +40,10 @@ public class WikiCrawler {
      * @return finishedLinks
      */
     private ArrayList<String> extractLinks(String document) throws IOException {
+        // Increment Count by one for max pages
+        if(count == max) return 
+        count++;
+
         ArrayList<String> finishedLinks = new ArrayList<>();
         URL url = new URL(BASE_URL+document);
         InputStream is = url.openStream();
@@ -81,19 +88,20 @@ public class WikiCrawler {
      public int crawl(boolean focused) throws IOException {
         //Starts the WikiCrawler from seed until max value
         ArrayList<String> seedLinks = extractLinks(seed);
+        int limit;
+        if (seedLinks.size() < max) limit = seedLinks.size();
+        else limit = max;
 
-        for(int i=0;i < max; i++) {
-
-
-            System.out.println(seedLinks.get(i));
-            releavance(seedLinks.get(i));
-            // extractLinks(seedLinks.get(i));
-        }
         if(focused) {
-        }else if(!focused){
-
-
-
+//            relevance(seedLinks.get(i));
+        }else{
+            for(int i=0;i < limit; i++) {
+                System.out.println(seedLinks.get(i));
+                ArrayList<String> newlinks = extractLinks(seedLinks.get(i));
+                for(int j = 0; j < newlinks.size(); j++){
+                    System.out.println("\t - " + newlinks.get(j));
+                }
+            }
         }
         // TODO Crawl will call extract links from the initial seed extraction.
         // TODO focused explores in BFS when false
