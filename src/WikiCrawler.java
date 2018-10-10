@@ -5,6 +5,10 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * @Authors Peter DeBisschop (pjd), Kyle Zelnio (kjzelnio)
+ */
+
 public class WikiCrawler {
 //    static final String BASE_URL = "https://en.wikipedia.org";
     static final String BASE_URL = "http://web.cs.iastate.edu/~pavan";
@@ -41,7 +45,6 @@ public class WikiCrawler {
      */
     private ArrayList<String> extractLinks(String document) throws IOException {
         // Increment Count by one for max pages
-        if(count == max) return 
         count++;
 
         ArrayList<String> finishedLinks = new ArrayList<>();
