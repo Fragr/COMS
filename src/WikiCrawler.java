@@ -71,7 +71,7 @@ public class WikiCrawler {
      * @param focused
      * @return
      */
-    private int crawl(boolean focused) {
+    public int crawl(boolean focused) {
         // TODO Crawl will call extract links from the initial seed extraction.
         // TODO focused explores in BFS when false
         // TODO focused, when true depends on relevance
