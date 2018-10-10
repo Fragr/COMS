@@ -17,6 +17,7 @@ public class PriorityQTest {
     PriorityQueue<Node> javaQ;
     PriorityComparator<Node> c;
     Random rand;
+    int length = 1000;
 
     @Before
     public void init() {
@@ -46,7 +47,6 @@ public class PriorityQTest {
 
     @Test
     public void sameOrder() {
-        int length = 10;
         for(int i = 0; i < length; i++) {
             Node toAdd = new Node("test" + i, i);
             javaQ.add(toAdd);
@@ -69,19 +69,30 @@ public class PriorityQTest {
 
     @Test
     public void sameRandomizedOrder() {
-        int length = 1000;
         for(int i = 0; i < length; i++) {
-            int number = rand.nextInt();
+            int number = rand.nextInt(50);
             Node toAdd = new Node("test" + number, number);
             javaQ.add(toAdd);
             q.add(toAdd.getString(), toAdd.getPriority());
         }
+
+
+        //printJavaQueue();
+        //q.print();
+
         ArrayList<String> l1 = new ArrayList<>();
         ArrayList<String> l2 = new ArrayList<>();
         for(int i = 0; i < length; i++) {
+            //System.out.println("Extract Max (" + i + ") :");
             l1.add(javaQ.poll().getString());
             l2.add(q.extractMax());
+            //printJavaQueue();
+            //q.print();
         }
+
+
+
+
         boolean matches = true;
         for(int i = 0; i < l1.size(); i++) {
             if(!l1.get(i).equals(l2.get(i))) {
@@ -93,7 +104,6 @@ public class PriorityQTest {
 
     @Test
     public void returnsMaximum() {
-        int length = 1000;
         for(int i = 0; i < length; i++) {
             Node toAdd = new Node("test" + i, i);
             javaQ.add(toAdd);
@@ -106,7 +116,6 @@ public class PriorityQTest {
 
     @Test
     public void returnThenExtractMin() {
-        int length = 1000;
         for(int i = 0; i < length; i++) {
             Node toAdd = new Node("test" + i, i);
             q.add(toAdd.getString(), toAdd.getPriority());
@@ -118,7 +127,6 @@ public class PriorityQTest {
 
     @Test
     public void arraysMatch() {
-        int length = 1000;
         String [] array = new String[length];
         for(int i = 0; i < length; i++) {
             Node toAdd = new Node("test" +  i, i);
@@ -132,5 +140,17 @@ public class PriorityQTest {
             }
         }
         assert(matches);
+    }
+
+    /*
+    HELPER
+    */
+    private void printJavaQueue() {
+        System.out.print("Java Priority Queue: ");
+        int j = 0;
+        for( Node n : javaQ ){
+            System.out.print( "{" + n.getKey() + ", " + n.getValue() + "} " );
+        }
+        System.out.println();
     }
 }
