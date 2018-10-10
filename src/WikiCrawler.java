@@ -41,7 +41,6 @@ public class WikiCrawler {
      */
     private ArrayList<String> extractLinks(String document) throws IOException {
         // Increment Count by one for max pages
-        if(count == max) return 
         count++;
 
         ArrayList<String> finishedLinks = new ArrayList<>();
@@ -95,13 +94,36 @@ public class WikiCrawler {
         if(focused) {
 //            relevance(seedLinks.get(i));
         }else{
-            for(int i=0;i < limit; i++) {
-                System.out.println(seedLinks.get(i));
-                ArrayList<String> newlinks = extractLinks(seedLinks.get(i));
-                for(int j = 0; j < newlinks.size(); j++){
-                    System.out.println("\t - " + newlinks.get(j));
+
+            ArrayList<String> queue = new ArrayList<String>();
+            ArrayList<String> discovered = new ArrayList<String>();
+            queue.add(seed);
+            discovered.add(seed);
+
+            System.out.println(seed);
+
+            while( !queue.isEmpty() && discovered.size() < max ) {
+                ArrayList<String> newLinks = extractLinks(queue.get(queue.size()-1));
+                printList(newLinks);
+
+                for(String s : newLinks) {
+                    if( !discovered.contains(s) ){
+                        queue.add(s);
+                        discovered.add(s);
+                    }
                 }
             }
+
+            printList(queue);
+            printList(discovered);
+
+//            for(int i=0;i < limit; i++) {
+//                System.out.println(seedLinks.get(i));
+//                ArrayList<String> newlinks = extractLinks(seedLinks.get(i));
+//                for(int j = 0; j < newlinks.size(); j++){
+//                    System.out.println("\t - " + newlinks.get(j));
+//                }
+//            }
         }
         // TODO Crawl will call extract links from the initial seed extraction.
         // TODO focused explores in BFS when false
@@ -134,6 +156,13 @@ public class WikiCrawler {
         }
         System.out.println(relevance);
         br.close();
+    }
+
+    private void printList(ArrayList<String> list) {
+         for( String s : list ){
+             System.out.print(s + " ");
+         }
+         System.out.println();
     }
 }
 
