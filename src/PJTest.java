@@ -1,3 +1,8 @@
+
+/**
+ * @author Peter DeBisschop (pjd), Kyle Zelnio (kjzelnio)
+ */
+
 public class PJTest {
 
     static PriorityQ heap;

@@ -1,5 +1,9 @@
 import java.util.ArrayList;
 
+/**
+ * @author Peter DeBisschop (pjd), Kyle Zelnio (kjzelnio)
+ */
+
 public class PriorityQ {
 
     private ArrayList<Node> heap;

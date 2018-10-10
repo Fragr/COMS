@@ -5,6 +5,10 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * @author Peter DeBisschop (pjd), Kyle Zelnio (kjzelnio)
+ */
+
 public class WikiCrawler {
 //    static final String BASE_URL = "https://en.wikipedia.org";
     static final String BASE_URL = "http://web.cs.iastate.edu/~pavan";

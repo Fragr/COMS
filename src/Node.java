@@ -1,3 +1,8 @@
+
+/**
+ * @author Peter DeBisschop (pjd), Kyle Zelnio (kjzelnio)
+ */
+
 public class Node {
 
     private String value;
