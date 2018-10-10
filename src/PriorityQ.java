@@ -23,7 +23,7 @@ public class PriorityQ {
             System.out.println("ERROR: Priority can not be negative!");
             return -1;
         }
-        System.out.println("ADD NODE {" + n.getKey() + ", " + n.getValue() + "}");
+        //System.out.println("ADD NODE {" + n.getKey() + ", " + n.getValue() + "}");
         heap.add(n);
         if( !isEmpty() && size() > 1 ){
             heapifyUp(size());
@@ -39,8 +39,9 @@ public class PriorityQ {
             System.out.println("ERROR: Queue is empty!");
             return "Queue is empty";
         }
-        String s = heap.get(1).getValue();
-        remove(1);
+
+        String s = getValue(0);
+        remove(0);
         return s;
     }
 
@@ -50,21 +51,21 @@ public class PriorityQ {
      * @return the key of the removed node
      */
     public int remove(int i) {
-        i = i+1;
         if( isEmpty() ) {
             System.out.println("ERROR: Queue is empty!");
             return -1;
         }
-        //TODO Remove print statement, for testing only
-        System.out.println("REMOVE NODE {" + heap.get(i).getKey() + ", " + heap.get(i).getValue() + "}");
+        if( i == 0)
+            i = 1;
+        //System.out.println("REMOVE NODE {" + heap.get(i).getKey() + ", " + heap.get(i).getValue() + "}");
 
         int key = heap.get(i).getKey();
 
         if( i == size() ){
-            heap.remove(size()-1);
+            heap.remove(size());
         }else{
-            Node tempNode = heap.get(size()-1);
-            heap.remove(tempNode);
+            Node tempNode = heap.get(size());
+            heap.remove(size());
             heap.set(i, tempNode);
         }
         heapifyDown(i);
@@ -144,7 +145,7 @@ public class PriorityQ {
      * @return a string whose priority is maximum
      */
     public String returnMax() {
-        return getValue(1);
+        return getValue(0);
     }
 
     /*METHODS ADDED BY ME*/
@@ -175,15 +176,15 @@ public class PriorityQ {
      * @param i index of node
      */
     private void heapifyDown(int i) {
-        int j = 0;
+        int j = 1;
         int n = size();
         if( 2*i > n ){
-            System.out.println("2*i > n exiting");
+            //System.out.println("2*i > n exiting");
             return;
         }else if( 2*i < n ){
             int leftChild = getKey(child(i, 0));
             int rightChild = getKey(child(i, 1));
-            if( leftChild < rightChild ) {
+            if( leftChild > rightChild ) {
                 j = 2 * i;
             }else {
                 j = 2 * i + 1;
@@ -238,9 +239,11 @@ public class PriorityQ {
      */
     //TODO Change to private/remove
     void print() {
+        System.out.print("My Priority Queue:   ");
         for( Node n : heap ) {
             if( !n.getValue().equals("BASE") )
                 System.out.print( "{" + n.getKey() + ", " + n.getValue() + "} " );
+                //System.out.print( "{" + n.getValue() + "} " );
         }
         System.out.println();
     }
