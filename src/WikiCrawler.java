@@ -1,11 +1,17 @@
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class WikiCrawler {
     static final String BASE_URL = "https://en.wikipedia.org";
+    String seed = "";
+    int max;
+    String[]topics;
+    String output;
+
     /**
      *
      * @param seed related address of seed URL (within wiki domain)
@@ -14,14 +20,15 @@ public class WikiCrawler {
      * @param output string representing the filename where the web graph over discovered pages are written
      */
     public WikiCrawler(String seed, int max, String[] topics, String output) throws IOException {
-        //Starts the WikiCrawler from seed until max value
-        ArrayList<String> seedLinks = extractLinks(seed);
-        for(int i=0;i < max; i++) {
-            extractLinks(seedLinks.get(i));
-        }
+        this.seed = seed;
+        this.max = max;
+        this.topics = topics;
+        this.output = output;
+
         //TODO Implement Crawler
 //        System.out.println(extractLinks("/wiki/Physics")); //For testing specific pages
     }
+
 
     /**
      * Takes as input a document representing an entire HTML document.
@@ -71,11 +78,56 @@ public class WikiCrawler {
      * @param focused
      * @return
      */
-    public int crawl(boolean focused) {
+     public int crawl(boolean focused) throws IOException {
+        //Starts the WikiCrawler from seed until max value
+        ArrayList<String> seedLinks = extractLinks(seed);
+
+        for(int i=0;i < max; i++) {
+
+
+            System.out.println(seedLinks.get(i));
+            releavance(seedLinks.get(i));
+            // extractLinks(seedLinks.get(i));
+        }
+        if(focused) {
+        }else if(!focused){
+
+
+
+        }
         // TODO Crawl will call extract links from the initial seed extraction.
         // TODO focused explores in BFS when false
         // TODO focused, when true depends on relevance
         // TODO sleep 3sec after every 20 page crawls //Thread.sleep
         return 0;
     }
+
+
+    public void relevance(String link) throws IOException {
+        URL url = new URL(BASE_URL+link);
+        InputStream is = url.openStream();
+        BufferedReader br = new BufferedReader(new InputStreamReader(is));
+        String line;
+        int relevance = 0;
+
+
+        while((line = br.readLine()) != null){
+            Scanner sc = new Scanner(line);
+            while(sc.hasNext()){
+                String current = sc.next();
+                for(int i =0; i<topics.length; i++){
+                    if(current.equals(topics[i])){
+                        relevance++;
+                    }
+                }
+
+            }
+
+        }
+        System.out.println(relevance);
+        br.close();
+    }
 }
+
+
+
