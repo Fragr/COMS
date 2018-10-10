@@ -6,7 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * @Authors Peter DeBisschop (pjd), Kyle Zelnio (kjzelnio)
+ * @author Peter DeBisschop (pjd), Kyle Zelnio (kjzelnio)
  */
 
 public class WikiCrawler {

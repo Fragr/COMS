@@ -1,7 +1,7 @@
 import java.io.IOException;
 
 /**
- * @Authors Peter DeBisschop (pjd), Kyle Zelnio (kjzelnio)
+ * @author Peter DeBisschop (pjd), Kyle Zelnio (kjzelnio)
  */
 
 public class KyleTest {

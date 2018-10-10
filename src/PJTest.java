@@ -1,6 +1,6 @@
 
 /**
- * @Authors Peter DeBisschop (pjd), Kyle Zelnio (kjzelnio)
+ * @author Peter DeBisschop (pjd), Kyle Zelnio (kjzelnio)
  */
 
 public class PJTest {
