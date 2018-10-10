@@ -9,13 +9,16 @@ public class PriorityQ {
      */
     public PriorityQ() {
         heap = new ArrayList<Node>();
+        heap.add(new Node("BASE", -1));
     }
 
     /**
      * Adds a Node n to the priority queue
-     * @param n Node containing a string and priority
+     * @param s String containing the value
+     * @param p Integer containing the key
      */
-    public int add(Node n) {
+    public int add(String s, int p) {
+        Node n = new Node(s, p);
         if( n.getKey() < 0 ) {
             System.out.println("ERROR: Priority can not be negative!");
             return -1;
@@ -23,16 +26,9 @@ public class PriorityQ {
         System.out.println("ADD NODE {" + n.getKey() + ", " + n.getValue() + "}");
         heap.add(n);
         if( !isEmpty() && size() > 1 ){
-            heapifyUp(size()-1);
+            heapifyUp(size());
         }
         return 0;
-    }
-
-    /**
-     * @return a string whose priority is maximum
-     */
-    public String returnMax() {
-        return getValue(0);
     }
 
     /**
@@ -43,8 +39,9 @@ public class PriorityQ {
             System.out.println("ERROR: Queue is empty!");
             return "Queue is empty";
         }
-        remove(0);
-        return heap.get(0).getValue();
+        String s = heap.get(1).getValue();
+        remove(1);
+        return s;
     }
 
     /**
@@ -53,15 +50,17 @@ public class PriorityQ {
      * @return the key of the removed node
      */
     public int remove(int i) {
+        i = i+1;
         if( isEmpty() ) {
             System.out.println("ERROR: Queue is empty!");
             return -1;
         }
+        //TODO Remove print statement, for testing only
         System.out.println("REMOVE NODE {" + heap.get(i).getKey() + ", " + heap.get(i).getValue() + "}");
 
         int key = heap.get(i).getKey();
 
-        if( i == size()-1 ){
+        if( i == size() ){
             heap.remove(size()-1);
         }else{
             Node tempNode = heap.get(size()-1);
@@ -74,9 +73,12 @@ public class PriorityQ {
 
     /**
      * Decrements the priority of the ith element by k
+     * @param i index of node
+     * @param k amount to decrement by
      */
     //TODO decrementPriority CHECK FOR NEGATIVE
     public int decrementPriority(int i, int k) {
+        i = i+1;
         if( isEmpty() ) {
             System.out.println("ERROR: Queue is empty!");
             return -1;
@@ -95,7 +97,7 @@ public class PriorityQ {
         }
         int[] heapArray = new int[size()];
         for( int i = 0; i < size(); i++ ){
-            heapArray[i] = heap.get(i).getKey();
+            heapArray[i] = heap.get(i+1).getKey();
         }
         return heapArray;
     }
@@ -105,7 +107,13 @@ public class PriorityQ {
      * @return key(A[i]), where A is the array used to represent the priority queue
      */
     public int getKey(int i) {
-        return heap.get(i).getKey();
+        if( i == 0 )
+            i = 1;
+
+        if( i <= size() )
+            return heap.get(i).getKey();
+        else
+            return -1;
     }
 
     /**
@@ -113,14 +121,30 @@ public class PriorityQ {
      * @return value(A[i]), where A is the array used to represent the priority queue
      */
     public String getValue(int i) {
-        return heap.get(i).getValue();
+        if( i == 0 )
+            i = 1;
+
+        if( i <= size() )
+            return heap.get(i).getValue();
+        else
+            return "NULL";
     }
 
     /**
      * @return true if and only if the queue is empty
      */
     public boolean isEmpty() {
-        return heap.isEmpty();
+        if( heap.size() <= 1 )
+            return true;
+        else
+            return false;
+    }
+
+    /**
+     * @return a string whose priority is maximum
+     */
+    public String returnMax() {
+        return getValue(1);
     }
 
     /*METHODS ADDED BY ME*/
@@ -133,22 +157,15 @@ public class PriorityQ {
      */
     private void heapifyUp(int i) {
         int j;
-        if( i > 0 ){
+        if( i > 1 ){
             j = parent(i);
-            if( getKey(i) > getKey(j) ){
+            int parentKey = getKey(j);
+            int childKey = getKey(i);
+            if( childKey > parentKey ){
                 swap(i, j);
                 heapifyUp(j);
             }
         }
-//        int tempKey = keys.get(i);
-//        String tempHeap = heap.get(i);
-//        while( i > 0 && tempKey > getKey(parent(i))){
-//            heap.set(i, getValue(parent(i)));
-//            keys.set(i, getKey(parent(i)));
-//            i = parent(i);
-//        }
-//        keys.set(i, tempKey);
-//        heap.set(i, tempHeap);
     }
 
     /**
@@ -164,7 +181,9 @@ public class PriorityQ {
             System.out.println("2*i > n exiting");
             return;
         }else if( 2*i < n ){
-            if( getKey(child(i, 0)) < getKey(child(i, 1)) ) {
+            int leftChild = getKey(child(i, 0));
+            int rightChild = getKey(child(i, 1));
+            if( leftChild < rightChild ) {
                 j = 2 * i;
             }else {
                 j = 2 * i + 1;
@@ -193,7 +212,7 @@ public class PriorityQ {
      * @return the size of the heap
      */
     public int size() {
-        return heap.size();
+        return heap.size()-1;
     }
 
     /**
@@ -201,7 +220,7 @@ public class PriorityQ {
      * @return the index of the parent
      */
     private int parent(int i) {
-        return i/2;
+        return (i/2);
     }
 
     /**
@@ -210,28 +229,72 @@ public class PriorityQ {
      * @return the index of the left or right child given and index
      */
     private int child(int i, int j) {
-        return 2*i+j+1;
+        return 2*i+j;
     }
 
     /**
-     * Prints the heap array list
+     * Prints the heap array list with the
+     * format of {KEY, VALUE}
      */
-    //TODO Change to private
+    //TODO Change to private/remove
     void print() {
-        for( Node n : heap) {
-            System.out.print( "{" + n.getKey() + ", " + n.getValue() + "} " );
+        for( Node n : heap ) {
+            if( !n.getValue().equals("BASE") )
+                System.out.print( "{" + n.getKey() + ", " + n.getValue() + "} " );
         }
         System.out.println();
+    }
+
+    /**
+     * Prints the value and key of a given node
+     * with the format {KEY, VALUE}
+     * @param i index of node
+     */
+    //TODO Change to private/remove
+    void printNode(int i) {
+        i =+ 1;
+        System.out.print("{" + getKey(i) + ", " + getValue(i) + "} ");
     }
 
     /**
      * Prints the child nodes of a given node
      * @param i index of node
      */
+    //TODO Change to private/remove
     void printChildren(int i) {
+        i =+ 1;
         System.out.println("The children of {" + heap.get(i).getKey() + ", " + heap.get(i).getValue() + "} are:" );
 
-        System.out.print( "{" + heap.get(child(i, 0)).getKey() + ", " + heap.get(child(i, 0)).getValue() + "} " );
-        System.out.println( "{" + heap.get(child(i, 1)).getKey() + ", " + heap.get(child(i, 1)).getValue() + "} " );
+        if( child(i, 0) <= size() )
+            System.out.print( "{" + heap.get(child(i, 0)).getKey() + ", " + heap.get(child(i, 0)).getValue() + "} " );
+        if( child(i, 1) <= size() )
+            System.out.println( "{" + heap.get(child(i, 1)).getKey() + ", " + heap.get(child(i, 1)).getValue() + "} " );
+        else
+            System.out.println();
+    }
+
+    /**
+     * Print the parent of a given node
+     * @param i index of node
+     */
+    //TODO Change to private/remove
+    void printParent(int i) {
+        i =+ 1;
+        System.out.println("The parent of {" + heap.get(i).getKey() + ", " + heap.get(i).getValue() + "} is:" );
+        System.out.print( "{" + heap.get(parent(i)).getKey() + ", " + heap.get(parent(i)).getValue() + "} \n" );
+    }
+
+    //TODO REMOVE Just for testing
+    public int add(Node n) {
+        if( n.getKey() < 0 ) {
+            System.out.println("ERROR: Priority can not be negative!");
+            return -1;
+        }
+        System.out.println("ADD NODE {" + n.getKey() + ", " + n.getValue() + "}");
+        heap.add(n);
+        if( !isEmpty() && size() > 1 ){
+            heapifyUp(size());
+        }
+        return 0;
     }
 }

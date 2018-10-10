@@ -3,59 +3,22 @@ public class PJTest {
     static PriorityQ heap;
 
     public static void test() {
-        heap = new PriorityQ();
-        System.out.println("{KEY, VALUE}");
+        PriorityQ heap = new PriorityQ();
 
-        addNodes(10);
-        heap.printChildren(0);
-        heap.printChildren(1);
-        heap.printChildren(2);
-        heap.printChildren(3);
-        heap.remove(3);
+        heap.add(new Node("a", 1));
         heap.print();
-        heap.printChildren(0);
-        heap.printChildren(1);
-        heap.printChildren(2);
-        heap.printChildren(3);
+        heap.add(new Node("b", 2));
+        heap.print();
+        heap.add(new Node("c", 3));
+        heap.print();
+        heap.add(new Node("d", 2));
+        heap.print();
 
-//        heap.add(new Node("A", 0));
-//        heap.print();
-//        heap.add(new Node("B", 1));
-//        heap.print();
-//        heap.add(new Node("C", 5));
-//        heap.print();
-//        heap.add(new Node("D", 3));
-//        heap.print();
-//        heap.add(new Node("E", 4));
-//        heap.print();
-//        heap.add(new Node("F", 2));
-//        heap.print();
-//        heap.remove(0);
-//        heap.print();
-//        heap.remove(heap.size()-1);
-//        heap.print();
-//        heap.add(new Node("G", 5));
-//        heap.print();
-
-//        heap.add("A", 0);
-//        heap.printHeap();
-//        heap.printKeys();
-//        heap.add("B", 1);
-//        heap.printHeap();
-//        heap.printKeys();
-//        heap.add("C", 5);
-//        heap.printHeap();
-//        heap.printKeys();
-//        heap.add("D", 3);
-//        heap.printHeap();
-//        heap.printKeys();
-//        heap.add("E", 4);
-//        heap.printHeap();
-//        heap.printKeys();
-//        heap.add("F", 2);
-//        heap.printHeap();
-//        heap.printKeys();
-
+//        heap.printParent(0);
+//        heap.printChildren(0);
+//
+        int[] heapPriorityArray = heap.priorityArray();
+        print(heapPriorityArray);
     }
 
     /**
@@ -70,5 +33,18 @@ public class PJTest {
             heap.add(new Node(Character.toString(c), i));
             heap.print();
         }
+    }
+
+    static void print(int[] a) {
+        System.out.println();
+        System.out.print("Priority Array {");
+        for(int i = 0; i < a.length; i++) {
+            if( i < a.length-1 )
+                System.out.print(a[i] + ", ");
+            else
+                System.out.print(a[i]);
+
+        }
+        System.out.print("}");
     }
 }
