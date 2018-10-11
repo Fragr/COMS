@@ -67,8 +67,6 @@ public class WikiCrawler {
             Matcher matcher = urlPattern.matcher(line);
 
             if( line.contains("<p>") ) flag = true;
-            else if( line.contains("</p>") ) flag = false;
-
 
             while(matcher.find() && flag){
                 String wikiLink;
@@ -85,7 +83,6 @@ public class WikiCrawler {
                     wikiLink = matcher.group(0).replace("href=\"", "").replace("\"", ""); //Removes href="XXXX" where xxxx is the wiki link
                     finishedLinks.add(wikiLink);
                 }
-                if( line.contains("</p>") ) flag = false;
             }
         }
         br.close();
@@ -156,12 +153,12 @@ public class WikiCrawler {
                         if( discovered.size() < max
                                 && !source.equals(newLinks.get(i))
                                 && !graph.contains( new Point(source, newLinks.get(i))) )
-                            graph.add(new Point(source, newLinks.get(i)));
+                            graph.add(new Point(source, newLinks.get(i) ));
                         else if( discovered.size() >= max
                                 && discovered.contains(newLinks.get(i))
                                 && !source.equals(newLinks.get(i))
                                 && !graph.contains( new Point(source, newLinks.get(i)) ) ){
-                            graph.add(new Point(source, newLinks.get(i)));
+                            graph.add(new Point(source, newLinks.get(i) ));
                         }
                     }
 
@@ -171,6 +168,7 @@ public class WikiCrawler {
                             discovered.add(s);
                         }
                     }
+
                 }
 
                 //removeDuplicates();
