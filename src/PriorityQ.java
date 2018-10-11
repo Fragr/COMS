@@ -59,8 +59,7 @@ public class PriorityQ {
             System.out.println("ERROR: Queue is empty!");
             return -1;
         }
-        if( i == 0)
-            i = 1;
+        if( i == 0) i = 1;
         //System.out.println("REMOVE NODE {" + heap.get(i).getKey() + ", " + heap.get(i).getValue() + "}");
 
         int key = heap.get(i).getKey();
@@ -81,13 +80,25 @@ public class PriorityQ {
      * @param i index of node
      * @param k amount to decrement by
      */
-    //TODO decrementPriority CHECK FOR NEGATIVE
     public int decrementPriority(int i, int k) {
-        i = i+1;
         if( isEmpty() ) {
             System.out.println("ERROR: Queue is empty!");
             return -1;
+        }else if( k < 0 ) {
+            System.out.println("ERROR: k can not be negative!");
+            return -1;
         }
+        if( i == 0 ) i = 1;
+
+        Node n = heap.get(i);
+
+        if( n.getKey() - k < 0 ){
+            System.out.println("ERROR: Key will be negative!");
+            return -1;
+        }
+
+        heap.get(i).setKey( n.getKey() - k );
+        heapifyDown(i);
         return 0;
     }
 
@@ -112,8 +123,7 @@ public class PriorityQ {
      * @return key(A[i]), where A is the array used to represent the priority queue
      */
     public int getKey(int i) {
-        if( i == 0 )
-            i = 1;
+        if( i == 0 ) i = 1;
 
         if( i <= size() )
             return heap.get(i).getKey();
@@ -126,8 +136,7 @@ public class PriorityQ {
      * @return value(A[i]), where A is the array used to represent the priority queue
      */
     public String getValue(int i) {
-        if( i == 0 )
-            i = 1;
+        if( i == 0 ) i = 1;
 
         if( i <= size() )
             return heap.get(i).getValue();
@@ -259,7 +268,7 @@ public class PriorityQ {
      */
     //TODO Change to private/remove
     void printNode(int i) {
-        i =+ 1;
+        if( i == 0 ) i = 1;
         System.out.print("{" + getKey(i) + ", " + getValue(i) + "} ");
     }
 
@@ -269,7 +278,7 @@ public class PriorityQ {
      */
     //TODO Change to private/remove
     void printChildren(int i) {
-        i =+ 1;
+        if( i == 0 ) i = 1;
         System.out.println("The children of {" + heap.get(i).getKey() + ", " + heap.get(i).getValue() + "} are:" );
 
         if( child(i, 0) <= size() )
@@ -286,7 +295,7 @@ public class PriorityQ {
      */
     //TODO Change to private/remove
     void printParent(int i) {
-        i =+ 1;
+        if( i == 0 ) i = 1;
         System.out.println("The parent of {" + heap.get(i).getKey() + ", " + heap.get(i).getValue() + "} is:" );
         System.out.print( "{" + heap.get(parent(i)).getKey() + ", " + heap.get(parent(i)).getValue() + "} \n" );
     }

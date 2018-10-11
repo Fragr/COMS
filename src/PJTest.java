@@ -18,6 +18,10 @@ public class PJTest {
         heap.print();
         heap.add(new Node("d", 2));
         heap.print();
+        heap.decrementPriority(3, 2);
+        heap.print();
+        heap.printChildren(3);
+        heap.printParent(4);
 
 //        heap.printParent(0);
 //        heap.printChildren(0);

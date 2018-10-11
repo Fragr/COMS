@@ -106,8 +106,11 @@ public class WikiCrawler {
 
             System.out.println(seed);
 
-            while( !queue.isEmpty() && discovered.size() < max ) {
-                ArrayList<String> newLinks = extractLinks(queue.get(queue.size()-1));
+            while( !queue.isEmpty() ) {
+                String source = queue.get(0);
+                ArrayList<String> newLinks = extractLinks(source);
+                queue.remove(0);
+                System.out.print("Links from " + source + ": ");
                 printList(newLinks);
 
                 for(String s : newLinks) {
@@ -118,7 +121,7 @@ public class WikiCrawler {
                 }
             }
 
-            printList(queue);
+            //printList(queue);
             printList(discovered);
 
 //            for(int i=0;i < limit; i++) {
@@ -135,7 +138,6 @@ public class WikiCrawler {
         // TODO sleep 3sec after every 20 page crawls //Thread.sleep
         return 0;
     }
-
 
     public void relevance(String link) throws IOException {
         URL url = new URL(BASE_URL+link);
@@ -160,6 +162,10 @@ public class WikiCrawler {
         }
         System.out.println(relevance);
         br.close();
+    }
+
+    private void graph() {
+
     }
 
     private void printList(ArrayList<String> list) {
