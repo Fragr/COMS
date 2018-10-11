@@ -1,5 +1,9 @@
 import java.io.*;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -10,14 +14,16 @@ import java.util.regex.Pattern;
  */
 
 public class WikiCrawler {
-//    static final String BASE_URL = "https://en.wikipedia.org";
-    static final String BASE_URL = "http://web.cs.iastate.edu/~pavan";
+    static final String BASE_URL = "https://en.wikipedia.org";
+    //static final String BASE_URL = "http://web.cs.iastate.edu/~pavan";
     String seed;
     // Count is the current count of considered pages.
     int count = 0;
     int max;
     String[]topics;
     String output;
+
+    ArrayList<Point> graph;
 
     /**
      *
@@ -32,8 +38,7 @@ public class WikiCrawler {
         this.topics = topics;
         this.output = output;
 
-        //TODO Implement Crawler
-//        System.out.println(extractLinks("/wiki/A.html")); //For testing specific pages
+        graph = new ArrayList<Point>();
     }
 
 
@@ -43,7 +48,7 @@ public class WikiCrawler {
      * @param document
      * @return finishedLinks
      */
-    private ArrayList<String> extractLinks(String document) throws IOException {
+    private ArrayList<String> extractLinks(String document) throws IOException, InterruptedException {
         // Increment Count by one for max pages
         count++;
 
@@ -52,6 +57,7 @@ public class WikiCrawler {
         InputStream is = url.openStream();
         BufferedReader br = new BufferedReader(new InputStreamReader(is));
         String line;
+        boolean flag = false;
 
         Pattern urlPattern = Pattern.compile(
                 "href=\"([^\"]*)\"",
@@ -59,7 +65,12 @@ public class WikiCrawler {
 
         while((line = br.readLine()) != null){
             Matcher matcher = urlPattern.matcher(line);
-            while(matcher.find()){
+
+            if( line.contains("<p>") ) flag = true;
+            else if( line.contains("</p>") ) flag = false;
+
+
+            while(matcher.find() && flag){
                 String wikiLink;
                 // Removes links we dont care about
                 if(matcher.group(0).contains("%")
@@ -70,13 +81,15 @@ public class WikiCrawler {
                         || matcher.group(0).contains("//")
                         || matcher.group(0).contains("/static/")
                         || matcher.group(0).contains("/w/"));
-                else {
+                else{
                     wikiLink = matcher.group(0).replace("href=\"", "").replace("\"", ""); //Removes href="XXXX" where xxxx is the wiki link
                     finishedLinks.add(wikiLink);
                 }
+                if( line.contains("</p>") ) flag = false;
             }
         }
         br.close();
+        //Thread.sleep((3 * 1000)/20);
         return finishedLinks;
     }
 
@@ -88,7 +101,7 @@ public class WikiCrawler {
      * @param focused
      * @return
      */
-     public int crawl(boolean focused) throws IOException {
+     public int crawl(boolean focused) throws IOException, InterruptedException {
         //Starts the WikiCrawler from seed until max value
         ArrayList<String> seedLinks = extractLinks(seed);
         int limit;
@@ -104,33 +117,70 @@ public class WikiCrawler {
             queue.add(seed);
             discovered.add(seed);
 
-            System.out.println(seed);
+            //TODO w/relevance
+            if( topics.length != 0 ){
+                while( !queue.isEmpty() ) {
+                    String source = queue.get(0);
+                    ArrayList<String> newLinks = extractLinks(source);
+                    queue.remove(0);
 
-            while( !queue.isEmpty() ) {
-                String source = queue.get(0);
-                ArrayList<String> newLinks = extractLinks(source);
-                queue.remove(0);
-                System.out.print("Links from " + source + ": ");
-                printList(newLinks);
+                    for( int i = 0; i < newLinks.size(); i++ ){
+                        if( discovered.size() < max )
+                            graph.add(new Point(source, newLinks.get(i)));
+                        else if( discovered.size() >= max && discovered.contains(newLinks.get(i))){
+                            graph.add(new Point(source, newLinks.get(i)));
+                        }
+                    }
 
-                for(String s : newLinks) {
-                    if( !discovered.contains(s) ){
-                        queue.add(s);
-                        discovered.add(s);
+                    for(String s : newLinks) {
+                        if( !discovered.contains(s) && discovered.size() < max ){
+                            queue.add(s);
+                            discovered.add(s);
+                        }
                     }
                 }
+
+                for( Point p : graph ){
+                    output += p.toString() + "\n";
+                }
+
+                outputToFile(discovered.size());
+
+            }else{
+                while( !queue.isEmpty() ) {
+                    String source = queue.get(0);
+                    ArrayList<String> newLinks = extractLinks(source);
+                    queue.remove(0);
+
+                    for( int i = 0; i < newLinks.size(); i++ ){
+                        if( discovered.size() < max
+                                && !source.equals(newLinks.get(i))
+                                && !graph.contains( new Point(source, newLinks.get(i))) )
+                            graph.add(new Point(source, newLinks.get(i)));
+                        else if( discovered.size() >= max
+                                && discovered.contains(newLinks.get(i))
+                                && !source.equals(newLinks.get(i))
+                                && !graph.contains( new Point(source, newLinks.get(i)) ) ){
+                            graph.add(new Point(source, newLinks.get(i)));
+                        }
+                    }
+
+                    for(String s : newLinks) {
+                        if( !discovered.contains(s) && discovered.size() < max ){
+                            queue.add(s);
+                            discovered.add(s);
+                        }
+                    }
+                }
+
+                //removeDuplicates();
+
+                for( Point p : graph ){
+                    output += p.toString() + "\n";
+                }
+
+                outputToFile(discovered.size());
             }
-
-            //printList(queue);
-            printList(discovered);
-
-//            for(int i=0;i < limit; i++) {
-//                System.out.println(seedLinks.get(i));
-//                ArrayList<String> newlinks = extractLinks(seedLinks.get(i));
-//                for(int j = 0; j < newlinks.size(); j++){
-//                    System.out.println("\t - " + newlinks.get(j));
-//                }
-//            }
         }
         // TODO Crawl will call extract links from the initial seed extraction.
         // TODO focused explores in BFS when false
@@ -164,8 +214,33 @@ public class WikiCrawler {
         br.close();
     }
 
-    private void graph() {
+    private void removeDuplicates() {
+        for( int i = 0; i < graph.size()-1; i++){
+            Point tempPoint = graph.get(i);
+            for(int j = 1; j < graph.size()-1; j++){
+                if( tempPoint.equals(graph.get(j)) ){
+                    graph.remove(j);
+                    j--;
+                }
+            }
+//             if(tempPoint.equals(graph.get(i+1))){
+//                 tempPoint = graph.get(i);
+//                 graph.remove(i+1);
+//             } else {
+//                 tempPoint = graph.get(i+1);
+//             }
+         }
+    }
 
+    /**
+     * Writes the output global variable to a file
+     * @param length of discover arraylist
+     */
+    private void outputToFile(int length) throws IOException {
+        FileWriter writer = new FileWriter("WikiCC.txt");
+        writer.write(length + "\r\n");
+        writer.write(output);
+        writer.close();
     }
 
     private void printList(ArrayList<String> list) {

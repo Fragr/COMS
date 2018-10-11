@@ -6,9 +6,9 @@ import java.io.IOException;
 
 public class KyleTest {
 
-    public static void test() throws IOException {
-        String[] test = {"known"};
-        WikiCrawler wc = new WikiCrawler("/wiki/A.html", 6, test, null);
+    public static void test() throws IOException, InterruptedException {
+        String[] test = {};
+        WikiCrawler wc = new WikiCrawler("/wiki/Complexity_theory", 100, test, new String());
         wc.crawl(false);
 //        PriorityQ pq = new PriorityQ();
     }
