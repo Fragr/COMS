@@ -225,7 +225,7 @@ public class PriorityQ {
     /**
      * @return the size of the heap
      */
-    public int size() {
+    private int size() {
         return heap.size()-1;
     }
 
@@ -251,7 +251,7 @@ public class PriorityQ {
      * format of {KEY, VALUE}
      */
     //TODO Change to private/remove
-    void print() {
+    private void print() {
         System.out.print("My Priority Queue:   ");
         for( Node n : heap ) {
             if( !n.getValue().equals("BASE") )
@@ -267,7 +267,7 @@ public class PriorityQ {
      * @param i index of node
      */
     //TODO Change to private/remove
-    void printNode(int i) {
+    private void printNode(int i) {
         if( i == 0 ) i = 1;
         System.out.print("{" + getKey(i) + ", " + getValue(i) + "} ");
     }
@@ -277,7 +277,7 @@ public class PriorityQ {
      * @param i index of node
      */
     //TODO Change to private/remove
-    void printChildren(int i) {
+    private void printChildren(int i) {
         if( i == 0 ) i = 1;
         System.out.println("The children of {" + heap.get(i).getKey() + ", " + heap.get(i).getValue() + "} are:" );
 
@@ -294,14 +294,14 @@ public class PriorityQ {
      * @param i index of node
      */
     //TODO Change to private/remove
-    void printParent(int i) {
+    private void printParent(int i) {
         if( i == 0 ) i = 1;
         System.out.println("The parent of {" + heap.get(i).getKey() + ", " + heap.get(i).getValue() + "} is:" );
         System.out.print( "{" + heap.get(parent(i)).getKey() + ", " + heap.get(parent(i)).getValue() + "} \n" );
     }
 
     //TODO REMOVE Just for testing
-    public int add(Node n) {
+    private int add(Node n) {
         if( n.getKey() < 0 ) {
             System.out.println("ERROR: Priority can not be negative!");
             return -1;

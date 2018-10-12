@@ -57,40 +57,35 @@ public class WikiCrawler {
         String line;
         boolean flag = false;
 
-//        Pattern urlPattern = Pattern.compile(
-//                "href=\"([^\"]*)\"",
-//                Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
+        Pattern urlPattern = Pattern.compile(
+                "href=\"([^\"]*)\"",
+                Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
 
         while((line = br.readLine()) != null){
-//            Matcher matcher = urlPattern.matcher(line);
+            Matcher matcher = urlPattern.matcher(line);
 
             if( line.contains("<p>") ) flag = true;
 
-            while(line.contains("href=\"/wiki/") && flag){
+            while(matcher.find() && flag){
                 String wikiLink;
                 // Removes links we dont care about
-                if(line.contains("%")
-                        || line.contains("php?")
-                        || line.contains("#")
-                        || line.contains(":")
-                        || line.contains("wikipedia.org")
-                        || line.contains("//")
-                        || line.contains("/static/")
-                        || line.contains("/w/"));
+                if(matcher.group(0).contains("%")
+                        || matcher.group(0).contains("php?")
+                        || matcher.group(0).contains("#")
+                        || matcher.group(0).contains(":")
+                        || matcher.group(0).contains("wikipedia.org")
+                        || matcher.group(0).contains("//")
+                        || matcher.group(0).contains("/static/")
+                        || matcher.group(0).contains("/w/"));
                 else{
-                    wikiLink = line/*.replace(".*<a href=\"", "")*/;
-                    int endIndex = wikiLink.indexOf("\" title=");
-                    int startIndex = wikiLink.indexOf("<a href=\"");
-                    wikiLink = wikiLink.substring( startIndex, endIndex );
-                    wikiLink = wikiLink.replace("<a href=\"", "");
-                            //.replace("\"", "")
-                            //.replace("title=.*</a>", ""); //Removes href="XXXX" where xxxx is the wiki link
+                    wikiLink = matcher.group(0).replace("href=\"", "")
+                            .replace("\"", "");
                     finishedLinks.add(wikiLink);
                 }
             }
         }
         br.close();
-        //Thread.sleep((3 * 1000)/20);
+        Thread.sleep((3 * 1000)/20);
         return finishedLinks;
     }
 
@@ -113,6 +108,8 @@ public class WikiCrawler {
             ArrayList<String> discovered = new ArrayList<String>();
 
             if( topics.length != 0 ){
+                //Focused = True, Topics.length > 0
+
                 //Check the relevance of the seed first
                 if( checkRelevance(seed) > 0 ){
                     priorityQueue.add(seed, checkRelevance(seed));
@@ -122,7 +119,6 @@ public class WikiCrawler {
                         String source = priorityQueue.getValue(0);
                         ArrayList<String> newLinks = extractLinks(source);
                         priorityQueue.extractMax();
-
 
                         for( int i = 0; i < newLinks.size(); i++ ){
                             //Check the relevance of each new link first
@@ -159,10 +155,51 @@ public class WikiCrawler {
 
                     outputToFile(discovered.size());
                 }else{
-                    //TODO What to do if the seed has no relevance?
-                }
+                    //Focused = True, Topics.length > 0, but seed has no relevance
+                    priorityQueue.add(seed, checkRelevance(seed));
+                    discovered.add(seed);
+
+                    while( !priorityQueue.isEmpty() ) {
+                        String source = priorityQueue.getValue(0);
+                        ArrayList<String> newLinks = extractLinks(source);
+                        priorityQueue.extractMax();
+
+                        for( int i = 0; i < newLinks.size(); i++ ){
+                            //Check the relevance of each new link first
+                            if( checkRelevance(newLinks.get(i)) > 0 ){ // Means the page contains at least 1 mention of the topics included
+                                //System.out.println("Page has a relevance > 0");
+                                if( discovered.size() < max
+                                        && !source.equals(newLinks.get(i))
+                                        && !graph.contains( new Point(source, newLinks.get(i))) )
+                                    graph.add(new Point(source, newLinks.get(i) ));
+                                else if( discovered.size() >= max
+                                        && discovered.contains(newLinks.get(i))
+                                        && !source.equals(newLinks.get(i))
+                                        && !graph.contains( new Point(source, newLinks.get(i)) ) ){
+                                    graph.add(new Point(source, newLinks.get(i) ));
+                                }
+                            }
+                        }
+
+                        for(String s : newLinks) {
+                            //Check the relevance of each new link first
+                            if( checkRelevance(s) > 0 ){ // Means the page contains at least 1 mention of the topics included
+                                //System.out.println("Page has a relevance > 0 adding to discovered & queue");
+                                if( !discovered.contains(s) && discovered.size() < max ) {
+                                    priorityQueue.add(s, checkRelevance(s));
+                                    discovered.add(s);
+                                }
+                            }
+                        }
+                    }
+
+                    for( Point p : graph ){
+                        output += p.toString() + "\n";
+                    }
+
+                    outputToFile(discovered.size());                }
             }else{
-                //TODO Topics list is empty, but focused is still true. All priority = 0?
+                //Focused = True, Topics.length == 0
                 priorityQueue.add(seed, 0);
                 discovered.add(seed);
 
@@ -207,6 +244,8 @@ public class WikiCrawler {
             discovered.add(seed);
 
             if( topics.length != 0 ){
+                //Focused = False, Topics.length > 0
+
                 while( !queue.isEmpty() ) {
                     String source = queue.get(0);
                     ArrayList<String> newLinks = extractLinks(source);
@@ -246,6 +285,8 @@ public class WikiCrawler {
                 outputToFile(discovered.size());
 
             }else{
+                //Focused = False, Topics.length == 0
+
                 while( !queue.isEmpty() ) {
                     String source = queue.get(0);
                     ArrayList<String> newLinks = extractLinks(source);
