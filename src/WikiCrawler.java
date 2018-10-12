@@ -1,9 +1,5 @@
 import java.io.*;
 import java.net.URL;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -111,6 +107,7 @@ public class WikiCrawler {
             ArrayList<String> discovered = new ArrayList<String>();
 
             if( topics.length != 0 ){
+                System.out.println("Crawl: True");
                 //Check the relevance of the seed first
                 if( checkRelevance(seed) > 0 ){
                     priorityQueue.add(seed, checkRelevance(seed));
@@ -125,10 +122,16 @@ public class WikiCrawler {
                         for( int i = 0; i < newLinks.size(); i++ ){
                             //Check the relevance of each new link first
                             if( checkRelevance(newLinks.get(i)) > 0 ){ // Means the page contains at least 1 mention of the topics included
-                                if( discovered.size() < max )
-                                    graph.add(new Point(source, newLinks.get(i)));
-                                else if( discovered.size() >= max && discovered.contains(newLinks.get(i))){
-                                    graph.add(new Point(source, newLinks.get(i)));
+                                //System.out.println("Page has a relevance > 0");
+                                if( discovered.size() < max
+                                        && !source.equals(newLinks.get(i))
+                                        && !graph.contains( new Point(source, newLinks.get(i))) )
+                                    graph.add(new Point(source, newLinks.get(i) ));
+                                else if( discovered.size() >= max
+                                        && discovered.contains(newLinks.get(i))
+                                        && !source.equals(newLinks.get(i))
+                                        && !graph.contains( new Point(source, newLinks.get(i)) ) ){
+                                    graph.add(new Point(source, newLinks.get(i) ));
                                 }
                             }
                         }
@@ -136,6 +139,7 @@ public class WikiCrawler {
                         for(String s : newLinks) {
                             //Check the relevance of each new link first
                             if( checkRelevance(s) > 0 ){ // Means the page contains at least 1 mention of the topics included
+                                //System.out.println("Page has a relevance > 0 adding to discovered & queue");
                                 if( !discovered.contains(s) && discovered.size() < max ) {
                                     priorityQueue.add(s, checkRelevance(s));
                                     discovered.add(s);
@@ -165,11 +169,16 @@ public class WikiCrawler {
 
 
                     for( int i = 0; i < newLinks.size(); i++ ){
-                            if( discovered.size() < max )
-                                graph.add(new Point(source, newLinks.get(i)));
-                            else if( discovered.size() >= max && discovered.contains(newLinks.get(i))){
-                                graph.add(new Point(source, newLinks.get(i)));
-                            }
+                        if( discovered.size() < max
+                                && !source.equals(newLinks.get(i))
+                                && !graph.contains( new Point(source, newLinks.get(i))) )
+                            graph.add(new Point(source, newLinks.get(i) ));
+                        else if( discovered.size() >= max
+                                && discovered.contains(newLinks.get(i))
+                                && !source.equals(newLinks.get(i))
+                                && !graph.contains( new Point(source, newLinks.get(i)) ) ){
+                            graph.add(new Point(source, newLinks.get(i) ));
+                        }
                     }
 
                     for(String s : newLinks) {
@@ -202,10 +211,15 @@ public class WikiCrawler {
                     for( int i = 0; i < newLinks.size(); i++ ){
                         //Check the relevance of each new link first
                         if( checkRelevance(newLinks.get(i)) > 0 ){ // Means the page contains at least 1 mention of the topics included
-                            if( discovered.size() < max )
-                                graph.add(new Point(source, newLinks.get(i)));
-                            else if( discovered.size() >= max && discovered.contains(newLinks.get(i))){
-                                graph.add(new Point(source, newLinks.get(i)));
+                            if( discovered.size() < max
+                                    && !source.equals(newLinks.get(i))
+                                    && !graph.contains( new Point(source, newLinks.get(i))) )
+                                graph.add(new Point(source, newLinks.get(i) ));
+                            else if( discovered.size() >= max
+                                    && discovered.contains(newLinks.get(i))
+                                    && !source.equals(newLinks.get(i))
+                                    && !graph.contains( new Point(source, newLinks.get(i)) ) ){
+                                graph.add(new Point(source, newLinks.get(i) ));
                             }
                         }
                     }
@@ -220,6 +234,8 @@ public class WikiCrawler {
                         }
                     }
                 }
+
+                System.out.println("OUTPUT");
 
                 for( Point p : graph ){
                     output += p.toString() + "\n";
@@ -285,17 +301,10 @@ public class WikiCrawler {
 
 
         while((line = br.readLine()) != null){
-            Scanner sc = new Scanner(line);
-            while(sc.hasNext()){
-                String current = sc.next();
-                for(int i = 0; i < topics.length; i++){
-                    if(current.equals(topics[i])){
-                        relevance++;
-                    }
-                }
-            }
+            for(String s :  topics)
+                if( line.contains(s) ) relevance++;
         }
-        System.out.println(relevance);
+        //System.out.println(relevance);
         br.close();
         return relevance;
     }

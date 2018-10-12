@@ -7,8 +7,8 @@ import java.io.IOException;
 public class KyleTest {
 
     public static void test() throws IOException, InterruptedException {
-        String[] test = {};
-        WikiCrawler wc = new WikiCrawler("/wiki/Complexity_theory", 100, test, new String());
+        String[] test = {"Complexity", "Physics"};
+        WikiCrawler wc = new WikiCrawler("/wiki/Complexity_theory", 5, test, new String());
         wc.crawl(true);
 //        PriorityQ pq = new PriorityQ();
     }
