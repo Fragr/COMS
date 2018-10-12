@@ -9,7 +9,7 @@ public class KyleTest {
     public static void test() throws IOException, InterruptedException {
         String[] test = {};
         WikiCrawler wc = new WikiCrawler("/wiki/Complexity_theory", 100, test, new String());
-        wc.crawl(false);
+        wc.crawl(true);
 //        PriorityQ pq = new PriorityQ();
     }
 }

@@ -24,6 +24,7 @@ public class WikiCrawler {
     String output;
 
     ArrayList<Point> graph;
+    PriorityQ priorityQueue;
 
     /**
      *
@@ -39,6 +40,7 @@ public class WikiCrawler {
         this.output = output;
 
         graph = new ArrayList<Point>();
+        priorityQueue = new PriorityQ();
     }
 
 
@@ -106,15 +108,91 @@ public class WikiCrawler {
         else limit = max;
 
         if(focused) {
-//            relevance(seedLinks.get(i));
-        }else{
+            ArrayList<String> discovered = new ArrayList<String>();
 
+            if( topics.length != 0 ){
+                //Check the relevance of the seed first
+                if( checkRelevance(seed) > 0 ){
+                    priorityQueue.add(seed, checkRelevance(seed));
+                    discovered.add(seed);
+
+                    while( !priorityQueue.isEmpty() ) {
+                        String source = priorityQueue.getValue(0);
+                        ArrayList<String> newLinks = extractLinks(source);
+                        priorityQueue.extractMax();
+
+
+                        for( int i = 0; i < newLinks.size(); i++ ){
+                            //Check the relevance of each new link first
+                            if( checkRelevance(newLinks.get(i)) > 0 ){ // Means the page contains at least 1 mention of the topics included
+                                if( discovered.size() < max )
+                                    graph.add(new Point(source, newLinks.get(i)));
+                                else if( discovered.size() >= max && discovered.contains(newLinks.get(i))){
+                                    graph.add(new Point(source, newLinks.get(i)));
+                                }
+                            }
+                        }
+
+                        for(String s : newLinks) {
+                            //Check the relevance of each new link first
+                            if( checkRelevance(s) > 0 ){ // Means the page contains at least 1 mention of the topics included
+                                if( !discovered.contains(s) && discovered.size() < max ) {
+                                    priorityQueue.add(s, checkRelevance(s));
+                                    discovered.add(s);
+                                }
+                            }
+                        }
+                    }
+
+                    for( Point p : graph ){
+                        output += p.toString() + "\n";
+                    }
+
+                    outputToFile(discovered.size());
+                }else{
+                    //TODO What to do if the seed has no relevance?
+                }
+            }else{
+                //TODO Topics list is empty, but focused is still true. All priority = 0?
+                System.out.println("TEST");
+                priorityQueue.add(seed, 0);
+                discovered.add(seed);
+
+                while( !priorityQueue.isEmpty() ) {
+                    String source = priorityQueue.getValue(0);
+                    ArrayList<String> newLinks = extractLinks(source);
+                    priorityQueue.extractMax();
+
+
+                    for( int i = 0; i < newLinks.size(); i++ ){
+                            if( discovered.size() < max )
+                                graph.add(new Point(source, newLinks.get(i)));
+                            else if( discovered.size() >= max && discovered.contains(newLinks.get(i))){
+                                graph.add(new Point(source, newLinks.get(i)));
+                            }
+                    }
+
+                    for(String s : newLinks) {
+                        if( !discovered.contains(s) && discovered.size() < max ) {
+                            priorityQueue.add(s, 0);
+                            discovered.add(s);
+                        }
+                    }
+                }
+
+                for( Point p : graph ){
+                    output += p.toString() + "\n";
+                }
+
+                outputToFile(discovered.size());
+            }
+
+        }else{
             ArrayList<String> queue = new ArrayList<String>();
             ArrayList<String> discovered = new ArrayList<String>();
             queue.add(seed);
             discovered.add(seed);
 
-            //TODO w/relevance
             if( topics.length != 0 ){
                 while( !queue.isEmpty() ) {
                     String source = queue.get(0);
@@ -122,17 +200,23 @@ public class WikiCrawler {
                     queue.remove(0);
 
                     for( int i = 0; i < newLinks.size(); i++ ){
-                        if( discovered.size() < max )
-                            graph.add(new Point(source, newLinks.get(i)));
-                        else if( discovered.size() >= max && discovered.contains(newLinks.get(i))){
-                            graph.add(new Point(source, newLinks.get(i)));
+                        //Check the relevance of each new link first
+                        if( checkRelevance(newLinks.get(i)) > 0 ){ // Means the page contains at least 1 mention of the topics included
+                            if( discovered.size() < max )
+                                graph.add(new Point(source, newLinks.get(i)));
+                            else if( discovered.size() >= max && discovered.contains(newLinks.get(i))){
+                                graph.add(new Point(source, newLinks.get(i)));
+                            }
                         }
                     }
 
                     for(String s : newLinks) {
-                        if( !discovered.contains(s) && discovered.size() < max ){
-                            queue.add(s);
-                            discovered.add(s);
+                        //Check the relevance of each new link first
+                        if( checkRelevance(s) > 0 ){ // Means the page contains at least 1 mention of the topics included
+                            if( !discovered.contains(s) && discovered.size() < max ) {
+                                queue.add(s);
+                                discovered.add(s);
+                            }
                         }
                     }
                 }
@@ -168,7 +252,6 @@ public class WikiCrawler {
                             discovered.add(s);
                         }
                     }
-
                 }
 
                 //removeDuplicates();
@@ -187,7 +270,13 @@ public class WikiCrawler {
         return 0;
     }
 
-    public void relevance(String link) throws IOException {
+    /**
+     * @param link String of the HTML page you are checking
+     * @return relevance which counts the total # of times that a string
+     *      in the topics list is on the page
+     * @throws IOException
+     */
+    private int checkRelevance(String link) throws IOException {
         URL url = new URL(BASE_URL+link);
         InputStream is = url.openStream();
         BufferedReader br = new BufferedReader(new InputStreamReader(is));
@@ -199,17 +288,16 @@ public class WikiCrawler {
             Scanner sc = new Scanner(line);
             while(sc.hasNext()){
                 String current = sc.next();
-                for(int i =0; i<topics.length; i++){
+                for(int i = 0; i < topics.length; i++){
                     if(current.equals(topics[i])){
                         relevance++;
                     }
                 }
-
             }
-
         }
         System.out.println(relevance);
         br.close();
+        return relevance;
     }
 
     private void removeDuplicates() {
