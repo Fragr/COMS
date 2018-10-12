@@ -57,28 +57,34 @@ public class WikiCrawler {
         String line;
         boolean flag = false;
 
-        Pattern urlPattern = Pattern.compile(
-                "href=\"([^\"]*)\"",
-                Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
+//        Pattern urlPattern = Pattern.compile(
+//                "href=\"([^\"]*)\"",
+//                Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
 
         while((line = br.readLine()) != null){
-            Matcher matcher = urlPattern.matcher(line);
+//            Matcher matcher = urlPattern.matcher(line);
 
             if( line.contains("<p>") ) flag = true;
 
-            while(matcher.find() && flag){
+            while(line.contains("href=\"/wiki/") && flag){
                 String wikiLink;
                 // Removes links we dont care about
-                if(matcher.group(0).contains("%")
-                        || matcher.group(0).contains("php?")
-                        || matcher.group(0).contains("#")
-                        || matcher.group(0).contains(":")
-                        || matcher.group(0).contains("wikipedia.org")
-                        || matcher.group(0).contains("//")
-                        || matcher.group(0).contains("/static/")
-                        || matcher.group(0).contains("/w/"));
+                if(line.contains("%")
+                        || line.contains("php?")
+                        || line.contains("#")
+                        || line.contains(":")
+                        || line.contains("wikipedia.org")
+                        || line.contains("//")
+                        || line.contains("/static/")
+                        || line.contains("/w/"));
                 else{
-                    wikiLink = matcher.group(0).replace("href=\"", "").replace("\"", ""); //Removes href="XXXX" where xxxx is the wiki link
+                    wikiLink = line/*.replace(".*<a href=\"", "")*/;
+                    int endIndex = wikiLink.indexOf("\" title=");
+                    int startIndex = wikiLink.indexOf("<a href=\"");
+                    wikiLink = wikiLink.substring( startIndex, endIndex );
+                    wikiLink = wikiLink.replace("<a href=\"", "");
+                            //.replace("\"", "")
+                            //.replace("title=.*</a>", ""); //Removes href="XXXX" where xxxx is the wiki link
                     finishedLinks.add(wikiLink);
                 }
             }
@@ -107,7 +113,6 @@ public class WikiCrawler {
             ArrayList<String> discovered = new ArrayList<String>();
 
             if( topics.length != 0 ){
-                System.out.println("Crawl: True");
                 //Check the relevance of the seed first
                 if( checkRelevance(seed) > 0 ){
                     priorityQueue.add(seed, checkRelevance(seed));
@@ -158,7 +163,6 @@ public class WikiCrawler {
                 }
             }else{
                 //TODO Topics list is empty, but focused is still true. All priority = 0?
-                System.out.println("TEST");
                 priorityQueue.add(seed, 0);
                 discovered.add(seed);
 
@@ -235,8 +239,6 @@ public class WikiCrawler {
                     }
                 }
 
-                System.out.println("OUTPUT");
-
                 for( Point p : graph ){
                     output += p.toString() + "\n";
                 }
@@ -269,8 +271,6 @@ public class WikiCrawler {
                         }
                     }
                 }
-
-                //removeDuplicates();
 
                 for( Point p : graph ){
                     output += p.toString() + "\n";
@@ -332,6 +332,7 @@ public class WikiCrawler {
      * @param length of discover arraylist
      */
     private void outputToFile(int length) throws IOException {
+        System.out.println("OUTPUT");
         FileWriter writer = new FileWriter("WikiCC.txt");
         writer.write(length + "\r\n");
         writer.write(output);

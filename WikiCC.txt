@@ -1,18 +1,9 @@
-5
-/wiki/Complexity_theory /wiki/Complexity
-/wiki/Complexity_theory /wiki/Complex_systems
-/wiki/Complexity_theory /wiki/Complexity_theory_and_organizations
-/wiki/Complexity_theory /wiki/Complexity_economics
-/wiki/Complexity_theory /wiki/Complex_adaptive_system
-/wiki/Complexity_theory /wiki/Computational_complexity_theory
-/wiki/Complexity_theory /wiki/Computational_complexity
-/wiki/Complexity_theory /wiki/Complexity_(disambiguation)
-/wiki/Complexity_theory /wiki/Systems_theory
-/wiki/Complexity_theory /wiki/Complex_networks
-/wiki/Complexity /wiki/Complex_systems
-/wiki/Complexity_economics /wiki/Complexity
-/wiki/Complexity_economics /wiki/Complexity_theory_and_organizations
-/wiki/Complexity_theory_and_organizations /wiki/Complex_systems
-/wiki/Complexity_theory_and_organizations /wiki/Complexity
-/wiki/Complex_systems /wiki/Complexity
-/wiki/Complex_systems /wiki/Complexity_economics
+6
+/wiki/A.html /wiki/B.html
+/wiki/A.html /wiki/C.html
+/wiki/A.html /wiki/D.html
+/wiki/B.html /wiki/I.html
+/wiki/B.html /wiki/J.html
+/wiki/C.html /wiki/B.html
+/wiki/C.html /wiki/D.html
+/wiki/D.html /wiki/A.html
