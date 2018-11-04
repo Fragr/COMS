@@ -40,7 +40,7 @@ public class ImageProcessor {
      *      Follow the method for reduction described above
      *      Write the result in a file named FName
      *      in the same format as the input image matrix
-     *      
+     *
      * @param k
      * @param FName String containing the file name to use
      */

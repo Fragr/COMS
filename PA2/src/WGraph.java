@@ -6,6 +6,9 @@ import java.util.ArrayList;
 
 public class WGraph {
 
+    private int V;
+    private int E;
+
     /**
      * Reads the file from FName from the same directory
      * and create a graph representation from the file data.
@@ -13,7 +16,7 @@ public class WGraph {
      *
      * First line contains a number indicating the number of vertices in the graph
      * Second line contains a number indicating the number of edges in the graph
-     * All subsequent lines have have numbers: source vertex coordinates (first two numbers),
+     * All subsequent lines have five numbers: source vertex coordinates (first two numbers),
      * destination vertex coordinates (third and fourth numbers) and weight of the edge connecting
      * the source vertex to the destination (assuming direction of edge from source to destination)
      *
@@ -22,10 +25,6 @@ public class WGraph {
     public WGraph(String FName) {
 
     }
-
-    // The pre/post-conditions describes the structure of the
-    // input/ouput. The semantics of these structures depend on
-    // defintion of the corresponding method.
 
     /**
      * Given vertices u and v, find the shortest path from u to v
@@ -42,7 +41,6 @@ public class WGraph {
     ArrayList<Integer> V2V(int ux, int uy, int vx, int vy) {
         return null;
     }
-
 
     /**
      * Given a vertex u and a set of vertices S, find the
