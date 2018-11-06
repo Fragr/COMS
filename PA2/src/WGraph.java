@@ -87,8 +87,8 @@ public class WGraph {
 
 //        System.out.println("Max X=" + ROWS + " Max Y=" + COLUMNS);
 
-        NODES = new Node[COLUMNS][ROWS];             //Creates the NODES 2D array that will hold the graph nodes based on x & y coordinates
-        initNodes();                                 //Initializes the NODES array with default NODES
+        NODES = new Node[COLUMNS][ROWS];            //Creates the NODES 2D array that will hold the graph nodes based on x & y coordinates
+        initNodes();                                //Initializes the NODES array with default NODES
 
         //Add source vertices to NODES
         for(int i = 0; i < count; i++){
@@ -98,8 +98,8 @@ public class WGraph {
         for(int i = 0; i < count; i++){
             addVertex(destX[i], destY[i]);
         }
-        printNodes(1);                            //Print nodes from NODES 2D array
-        printNodes(0);                            //Print nodes from NODELIST
+        printNodes(1);                           //Print nodes from NODES 2D array
+        printNodes(0);                           //Print nodes from NODELIST
 
     }
 
@@ -157,6 +157,12 @@ public class WGraph {
 
     private void addVertex(int x, int y) {
         NODES[y][x] = new Node(x, y);               //Adds node to NODES 2D array
+
+        //Check to see if the node already exists in the NODELIST
+        for(Node n : NODELIST){
+            if( n.equals(NODES[y][x]) )
+                return;
+        }
         NODELIST.add(NODES[y][x]);                  //Adds node to NODELIST
     }
 
@@ -199,7 +205,7 @@ public class WGraph {
             System.out.println("NODES 2D Array (END)");
         }else if( v == 0 ) {
             System.out.print("NODELIST: ");
-            for(int i = 0; i < NODELIST.size()-1; i++) {
+            for(int i = 0; i < NODELIST.size(); i++) {
                 System.out.print( NODELIST.get(i).toString() );
             }
             System.out.println();

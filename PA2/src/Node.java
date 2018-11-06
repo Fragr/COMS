@@ -23,6 +23,18 @@ public class Node {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if( !(obj instanceof Node) )
+            return false;
+
+        Node temp = (Node)obj;
+        if( this.X == temp.getX() && this.Y == temp.getY() )
+            return true;
+        else
+            return false;
+    }
+
+    @Override
     public String toString() {
         if( X == -1 && Y == -1 )
             return "{X}   ";
