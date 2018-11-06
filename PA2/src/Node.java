@@ -24,8 +24,49 @@ public class Node {
      * @param w weight of the edge
      */
     public void createEdge(Node dest, int w) {
-        visibleNodes.add(dest);
-        weight.add(w);
+        if( !visibleNodes.contains(dest) ) {
+            visibleNodes.add(dest);
+            weight.add(w);
+        }
+        System.out.println("ERROR: These nodes are already connected!");
+    }
+
+    /**
+     * Checks to see if a given node is visible by seeing
+     * if it exists in visibleNodes list
+     *
+     * @return True = visible False = NOT visible
+     */
+    public boolean checkVisibilty(Node dest) {
+        if( visibleNodes.contains(dest) ) {
+            System.out.println( toString() + "can see " + dest.toString());
+        }
+        return visibleNodes.contains(dest);
+    }
+
+    /**
+     * @return the visibleNodes list
+     */
+    public LinkedList<Node> getVisibleNodes() {
+       return visibleNodes;
+    }
+
+    /**
+     * Checks to see if the dest Node is in the visibleNodes
+     * list for this Node. Use the index of dest in visibleNodes
+     * to find the weight
+     *
+     * @param dest Node to getWeight
+     * @@return the weight of the connection between this node and dest node
+     */
+    public int getWeight(Node dest) {
+        for( int i = 0; i < visibleNodes.size(); i++ ) {
+            if( visibleNodes.get(i).equals(dest) ) {
+                System.out.println("Weight from " + toString() + "-> " + dest.toString() + "= " + weight.get(i));
+                return weight.get(i);
+            }
+        }
+        return -1;
     }
 
     /**
@@ -64,8 +105,13 @@ public class Node {
 
     void info() {
         System.out.println("Nodes visible to: " + this.toString());
+        if(visibleNodes.size() == 0){
+            System.out.println("NONE");
+            return;
+        }
         for( int i = 0; i < visibleNodes.size(); i++ ) {
             System.out.print( visibleNodes.get(i).toString() + " W: " + weight.get(i) + " | ");
         }
+        System.out.println();
     }
 }

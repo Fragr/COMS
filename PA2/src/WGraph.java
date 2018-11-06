@@ -93,13 +93,21 @@ public class WGraph {
         for(int i = 0; i < count; i++){
             addVertex(srcX[i], srcY[i]);                                                        //Add source vertices to NODES
             addVertex(destX[i], destY[i]);                                                      //Add destination vertices to NODES
-            NODES[srcY[i]][srcX[i]].createEdge(NODES[destY[i]][destX[i]], weight[i]);           //Creates an edge between the src and dest nodes
+            getNode(srcX[i], srcY[i]).createEdge(NODES[destY[i]][destX[i]], weight[i]);           //Creates an edge between the src and dest nodes
         }
 
         printNodes(1);                                                                       //Print nodes from NODES 2D array
         printNodes(0);                                                                       //Print nodes from NODELIST
 
-        NODES[1][2].info();        //Prints the nodes visible to this node and the weight between them
+        getNode(1,2).info();        //Prints the nodes visible to this node and the weight between them
+        getNode(3,4).info();
+        getNode(5,6).info();
+        getNode(7,8).info();
+
+        getNode(1,2).getWeight(getNode(3,4));
+
+        if( getNode(1,2).checkVisibilty(getNode(3,4)) )
+            System.out.println("TRUE");
     }
 
     /**
@@ -155,13 +163,15 @@ public class WGraph {
     /* HELPER METHODS */
 
     private void addVertex(int x, int y) {
-        NODES[y][x] = new Node(x, y);               //Adds node to NODES 2D array
-
         //Check to see if the node already exists in the NODELIST
         for(Node n : NODELIST){
-            if( n.equals(NODES[y][x]) )
+            if( n.equals(NODES[y][x]) ){
+                //System.out.println("ERROR: Node already exists!");
                 return;
+            }
         }
+
+        NODES[y][x] = new Node(x, y);               //Adds node to NODES 2D array
         NODELIST.add(NODES[y][x]);                  //Adds node to NODELIST
     }
 
@@ -175,7 +185,7 @@ public class WGraph {
     }
 
     private Node getNode(int x, int y){
-        System.out.println(NODES[y][x].toString());
+        //System.out.println(NODES[y][x].toString());
         return NODES[y][x];
     }
 
