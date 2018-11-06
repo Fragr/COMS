@@ -52,6 +52,13 @@ public class Node {
     }
 
     /**
+     * @return the weight list
+     */
+    public LinkedList<Integer> getWeight() {
+        return weight;
+    }
+
+    /**
      * Checks to see if the dest Node is in the visibleNodes
      * list for this Node. Use the index of dest in visibleNodes
      * to find the weight

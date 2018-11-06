@@ -99,15 +99,15 @@ public class WGraph {
         printNodes(1);                                                                       //Print nodes from NODES 2D array
         printNodes(0);                                                                       //Print nodes from NODELIST
 
-        getNode(1,2).info();        //Prints the nodes visible to this node and the weight between them
-        getNode(3,4).info();
-        getNode(5,6).info();
-        getNode(7,8).info();
+//        getNode(1,2).info();        //Prints the nodes visible to this node and the weight between them
+//        getNode(3,4).info();
+//        getNode(5,6).info();
+//        getNode(7,8).info();
+//
+//        getNode(1,2).getWeight(getNode(3,4));           //Prints the weight between these two nodes
+//
+//        getNode(1,2).checkVisibilty(getNode(3,4));      //Checks if the 1st node can see the 2nd
 
-        getNode(1,2).getWeight(getNode(3,4));
-
-        if( getNode(1,2).checkVisibilty(getNode(3,4)) )
-            System.out.println("TRUE");
     }
 
     /**
