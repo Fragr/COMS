@@ -111,7 +111,7 @@ public class Node {
     }
 
     void info() {
-        System.out.println("Nodes visible to: " + this.toString());
+        System.out.print(this.toString() + "can see ");
         if(visibleNodes.size() == 0){
             System.out.println("NONE");
             return;

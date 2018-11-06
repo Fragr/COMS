@@ -93,17 +93,17 @@ public class WGraph {
         for(int i = 0; i < count; i++){
             addVertex(srcX[i], srcY[i]);                                                        //Add source vertices to NODES
             addVertex(destX[i], destY[i]);                                                      //Add destination vertices to NODES
-            getNode(srcX[i], srcY[i]).createEdge(NODES[destY[i]][destX[i]], weight[i]);           //Creates an edge between the src and dest nodes
+            getNode(srcX[i], srcY[i]).createEdge(getNode(destX[i],destY[i]), weight[i]);           //Creates an edge between the src and dest nodes
         }
 
         printNodes(1);                                                                       //Print nodes from NODES 2D array
         printNodes(0);                                                                       //Print nodes from NODELIST
 
-//        getNode(1,2).info();        //Prints the nodes visible to this node and the weight between them
-//        getNode(3,4).info();
-//        getNode(5,6).info();
-//        getNode(7,8).info();
-//
+        getNode(1,2).info();        //Prints the nodes visible to this node and the weight between them
+        getNode(3,4).info();
+        getNode(5,6).info();
+        getNode(7,8).info();
+
 //        getNode(1,2).getWeight(getNode(3,4));           //Prints the weight between these two nodes
 //
 //        getNode(1,2).checkVisibilty(getNode(3,4));      //Checks if the 1st node can see the 2nd
