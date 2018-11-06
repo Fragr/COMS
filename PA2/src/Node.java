@@ -1,11 +1,31 @@
+import java.util.LinkedList;
+
 public class Node {
 
     private int X;
     private int Y;
 
+    private LinkedList<Node> visibleNodes;
+    private LinkedList<Integer> weight;
+
     public Node(int x, int y) {
+        visibleNodes = new LinkedList<>();
+        weight = new LinkedList<>();
         X = x;
         Y = y;
+    }
+
+    /**
+     * Creates a directed edge to the node passed in
+     * by adding it the the visibleNodes list. Also
+     * adds the weight to the weight list.
+     *
+     * @param dest Node to add to visibleNodes
+     * @param w weight of the edge
+     */
+    public void createEdge(Node dest, int w) {
+        visibleNodes.add(dest);
+        weight.add(w);
     }
 
     /**
@@ -40,5 +60,12 @@ public class Node {
             return "{X}   ";
         else
             return "{" + X + "," + Y + "} ";
+    }
+
+    void info() {
+        System.out.println("Nodes visible to: " + this.toString());
+        for( int i = 0; i < visibleNodes.size(); i++ ) {
+            System.out.print( visibleNodes.get(i).toString() + " W: " + weight.get(i) + " | ");
+        }
     }
 }

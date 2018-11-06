@@ -75,32 +75,31 @@ public class WGraph {
 //        System.out.print("weight: ");
 //        printArray(weight);
 
-        int maxX[] = new int[2];                    //Array that holds max X values from srcX and destX
-        int maxY[] = new int[2];                    //Array that holds max Y values from srcY and destY
-        maxX[0] = findMax(srcX);                    //Finds max value of srcX values
-        maxY[0] = findMax(srcY);                    //Finds max value of srcY values
-        maxX[1] = findMax(destX);                   //Finds max value of destX values
-        maxY[1] = findMax(destY);                   //Finds max value of destY values
+        int maxX[] = new int[2];                                                                //Array that holds max X values from srcX and destX
+        int maxY[] = new int[2];                                                                //Array that holds max Y values from srcY and destY
+        maxX[0] = findMax(srcX);                                                                //Finds max value of srcX values
+        maxY[0] = findMax(srcY);                                                                //Finds max value of srcY values
+        maxX[1] = findMax(destX);                                                               //Finds max value of destX values
+        maxY[1] = findMax(destY);                                                               //Finds max value of destY values
 
-        ROWS = findMax(maxX)+1;                     //Finds max X/ROWS value of the max values from srcX & destX
-        COLUMNS = findMax(maxY)+1;                  //Finds max Y/COLUMNS value of the max values from srcY & destY
+        ROWS = findMax(maxX)+1;                                                                 //Finds max X/ROWS value of the max values from srcX & destX
+        COLUMNS = findMax(maxY)+1;                                                              //Finds max Y/COLUMNS value of the max values from srcY & destY
 
 //        System.out.println("Max X=" + ROWS + " Max Y=" + COLUMNS);
 
-        NODES = new Node[COLUMNS][ROWS];            //Creates the NODES 2D array that will hold the graph nodes based on x & y coordinates
-        initNodes();                                //Initializes the NODES array with default NODES
+        NODES = new Node[COLUMNS][ROWS];                                                        //Creates the NODES 2D array that will hold the graph nodes based on x & y coordinates
+        initNodes();                                                                            //Initializes the NODES array with default NODES
 
-        //Add source vertices to NODES
         for(int i = 0; i < count; i++){
-            addVertex(srcX[i], srcY[i]);
+            addVertex(srcX[i], srcY[i]);                                                        //Add source vertices to NODES
+            addVertex(destX[i], destY[i]);                                                      //Add destination vertices to NODES
+            NODES[srcY[i]][srcX[i]].createEdge(NODES[destY[i]][destX[i]], weight[i]);           //Creates an edge between the src and dest nodes
         }
-        //Add destination vertices to NODES
-        for(int i = 0; i < count; i++){
-            addVertex(destX[i], destY[i]);
-        }
-        printNodes(1);                           //Print nodes from NODES 2D array
-        printNodes(0);                           //Print nodes from NODELIST
 
+        printNodes(1);                                                                       //Print nodes from NODES 2D array
+        printNodes(0);                                                                       //Print nodes from NODELIST
+
+        NODES[1][2].info();        //Prints the nodes visible to this node and the weight between them
     }
 
     /**
