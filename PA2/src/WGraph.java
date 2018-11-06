@@ -11,6 +11,8 @@ public class WGraph {
 
     private int V;
     private int E;
+    private int X;
+    private int Y;
 
     /**
      * Reads the file from FName from the same directory
@@ -36,17 +38,48 @@ public class WGraph {
         V = Integer.parseInt(s);
         s = sc.nextLine();
         E = Integer.parseInt(s);
-        System.out.println("V: " + V);
-        System.out.println("E: " + E);
+        System.out.println("V: " + V + "\nE: " + E);
+
+        int srcX[] = new int[V];
+        int srcY[] = new int[V];
+        int destX[] = new int[V];
+        int destY[] = new int[V];
+        int weight[] = new int[V];
+        int i = 0;
 
         while (sc.hasNextLine()){
-            int srcX = sc.nextInt();
-            int srcY = sc.nextInt();
-            int destX = sc.nextInt();
-            int destY = sc.nextInt();
-            int weight = sc.nextInt();
-            System.out.println(srcX + ", " + srcY + " | " + destX + ", " + destY + " | " + weight);
+            srcX[i] = sc.nextInt();
+            srcY[i] = sc.nextInt();
+            destX[i] = sc.nextInt();
+            destY[i] = sc.nextInt();
+            weight[i] = sc.nextInt();
+            i++;
         }
+
+        System.out.print("srcX: ");
+        printArray(srcX);
+        System.out.print("srcY: ");
+        printArray(srcY);
+        System.out.print("destX: ");
+        printArray(destX);
+        System.out.print("destY: ");
+        printArray(destY);
+        System.out.print("weight: ");
+        printArray(weight);
+
+        //Find max X and Y values in order to create 2D array
+        int maxX[] = new int[2];
+        int maxY[] = new int[2];
+        maxX[0] = findMax(srcX);        //Finds max value of srcX values
+        maxY[0] = findMax(srcY);        //Finds max value of srcY values
+        maxX[1] = findMax(destX);       //Finds max value of destX values
+        maxY[1] = findMax(destY);       //Finds max value of destY values
+
+        X = findMax(maxX);              //Finds max X value of the max values from srcX & destX
+        Y = findMax(maxY);              //Finds max Y value of the max values from srcY & destY
+
+        System.out.println("Max X: " + X + " Max Y: " + Y);
+
     }
 
     /**
@@ -97,5 +130,24 @@ public class WGraph {
      */
     ArrayList<Integer> S2S(ArrayList<Integer> S1, ArrayList<Integer> S2) {
         return null;
+    }
+
+    /* HELPER METHODS */
+
+    private void printArray(int[] a) {
+        for(int i : a){
+            System.out.print(i + " ");
+        }
+        System.out.println();
+    }
+
+    private int findMax(int [] a) {
+        int max = a[0];
+        for(int i = 1; i < a.length; i++){
+            if( a[i] > max )
+                max = a[i];
+        }
+        System.out.println("MAX: " + max);
+        return max;
     }
 }
