@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 /**
@@ -11,8 +12,10 @@ public class WGraph {
 
     private int V;
     private int E;
-    private int X;
-    private int Y;
+    private int COLUMNS;
+    private int ROWS;
+
+    private int[][] NODES;
 
     /**
      * Reads the file from FName from the same directory
@@ -45,15 +48,16 @@ public class WGraph {
         int destX[] = new int[V];
         int destY[] = new int[V];
         int weight[] = new int[V];
-        int i = 0;
+        int count = 0;
 
+        //Loop through getting the srcX/Y location destX/Y location and weights from the file
         while (sc.hasNextLine()){
-            srcX[i] = sc.nextInt();
-            srcY[i] = sc.nextInt();
-            destX[i] = sc.nextInt();
-            destY[i] = sc.nextInt();
-            weight[i] = sc.nextInt();
-            i++;
+            srcX[count] = sc.nextInt();
+            srcY[count] = sc.nextInt();
+            destX[count] = sc.nextInt();
+            destY[count] = sc.nextInt();
+            weight[count] = sc.nextInt();
+            count++;
         }
 
         System.out.print("srcX: ");
@@ -70,16 +74,27 @@ public class WGraph {
         //Find max X and Y values in order to create 2D array
         int maxX[] = new int[2];
         int maxY[] = new int[2];
-        maxX[0] = findMax(srcX);        //Finds max value of srcX values
-        maxY[0] = findMax(srcY);        //Finds max value of srcY values
-        maxX[1] = findMax(destX);       //Finds max value of destX values
-        maxY[1] = findMax(destY);       //Finds max value of destY values
+        maxX[0] = findMax(srcX);                    //Finds max value of srcX values
+        maxY[0] = findMax(srcY);                    //Finds max value of srcY values
+        maxX[1] = findMax(destX);                   //Finds max value of destX values
+        maxY[1] = findMax(destY);                   //Finds max value of destY values
 
-        X = findMax(maxX);              //Finds max X value of the max values from srcX & destX
-        Y = findMax(maxY);              //Finds max Y value of the max values from srcY & destY
+        ROWS = findMax(maxX)+1;                       //Finds max X/ROWS value of the max values from srcX & destX
+        COLUMNS = findMax(maxY)+1;                    //Finds max Y/COLUMNS value of the max values from srcY & destY
 
-        System.out.println("Max X: " + X + " Max Y: " + Y);
+        System.out.println("Max X=" + ROWS + " Max Y=" + COLUMNS);
 
+        NODES = new int[COLUMNS][ROWS];             //Creates the NODES 2D array that will hold the graph nodes based on x & y coordinates
+
+        //Add source vertices to NODES
+        for(int i = 0; i < count; i++){
+            addVertex(srcX[i], srcY[i]);
+        }
+        //Add destination vertices to NODES
+        for(int i = 0; i < count; i++){
+            addVertex(destX[i], destY[i]);
+        }
+        print2DArray(NODES);
     }
 
     /**
@@ -134,11 +149,8 @@ public class WGraph {
 
     /* HELPER METHODS */
 
-    private void printArray(int[] a) {
-        for(int i : a){
-            System.out.print(i + " ");
-        }
-        System.out.println();
+    private void addVertex(int x, int y) {
+        NODES[y][x] = 1;
     }
 
     private int findMax(int [] a) {
@@ -147,7 +159,14 @@ public class WGraph {
             if( a[i] > max )
                 max = a[i];
         }
-        System.out.println("MAX: " + max);
         return max;
+    }
+
+    private void printArray(int[] a) {
+        System.out.println(Arrays.toString(a));
+    }
+
+    private void print2DArray(int[][] a) {
+        System.out.println(Arrays.deepToString(a).replace("], ", "]\n"));
     }
 }
