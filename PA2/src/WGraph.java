@@ -1,4 +1,7 @@
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 /**
  * @author Peter DeBisschop (pjd), Kyle Zelnio (kjzelnio)
@@ -22,8 +25,28 @@ public class WGraph {
      *
      * @param FName String containing the file name to use
      */
-    public WGraph(String FName) {
+    public WGraph(String FName) throws FileNotFoundException {
+        File file = new File(FName);
 
+        Scanner sc = new Scanner(file);
+        String s;
+
+        //Get the first 2 lines of the file & store them into V & E
+        s = sc.nextLine();
+        V = Integer.parseInt(s);
+        s = sc.nextLine();
+        E = Integer.parseInt(s);
+        System.out.println("V: " + V);
+        System.out.println("E: " + E);
+
+        while (sc.hasNextLine()){
+            int srcX = sc.nextInt();
+            int srcY = sc.nextInt();
+            int destX = sc.nextInt();
+            int destY = sc.nextInt();
+            int weight = sc.nextInt();
+            System.out.println(srcX + ", " + srcY + " | " + destX + ", " + destY + " | " + weight);
+        }
     }
 
     /**
