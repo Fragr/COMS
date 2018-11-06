@@ -2,6 +2,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.Scanner;
 
 /**
@@ -15,7 +16,8 @@ public class WGraph {
     private int COLUMNS;
     private int ROWS;
 
-    private int[][] NODES;
+    private Node[][] NODES;
+    private LinkedList<Node> NODELIST;
 
     /**
      * Reads the file from FName from the same directory
@@ -31,6 +33,8 @@ public class WGraph {
      * @param FName String containing the file name to use
      */
     public WGraph(String FName) throws FileNotFoundException {
+        NODELIST = new LinkedList<>();
+
         File file = new File(FName);
 
         Scanner sc = new Scanner(file);
@@ -41,7 +45,7 @@ public class WGraph {
         V = Integer.parseInt(s);
         s = sc.nextLine();
         E = Integer.parseInt(s);
-        System.out.println("V: " + V + "\nE: " + E);
+        System.out.println("Vertices = " + V + "\tEdges = " + E);
 
         int srcX[] = new int[V];
         int srcY[] = new int[V];
@@ -60,31 +64,31 @@ public class WGraph {
             count++;
         }
 
-        System.out.print("srcX: ");
-        printArray(srcX);
-        System.out.print("srcY: ");
-        printArray(srcY);
-        System.out.print("destX: ");
-        printArray(destX);
-        System.out.print("destY: ");
-        printArray(destY);
-        System.out.print("weight: ");
-        printArray(weight);
+//        System.out.print("srcX: ");
+//        printArray(srcX);
+//        System.out.print("srcY: ");
+//        printArray(srcY);
+//        System.out.print("destX: ");
+//        printArray(destX);
+//        System.out.print("destY: ");
+//        printArray(destY);
+//        System.out.print("weight: ");
+//        printArray(weight);
 
-        //Find max X and Y values in order to create 2D array
-        int maxX[] = new int[2];
-        int maxY[] = new int[2];
+        int maxX[] = new int[2];                    //Array that holds max X values from srcX and destX
+        int maxY[] = new int[2];                    //Array that holds max Y values from srcY and destY
         maxX[0] = findMax(srcX);                    //Finds max value of srcX values
         maxY[0] = findMax(srcY);                    //Finds max value of srcY values
         maxX[1] = findMax(destX);                   //Finds max value of destX values
         maxY[1] = findMax(destY);                   //Finds max value of destY values
 
-        ROWS = findMax(maxX)+1;                       //Finds max X/ROWS value of the max values from srcX & destX
-        COLUMNS = findMax(maxY)+1;                    //Finds max Y/COLUMNS value of the max values from srcY & destY
+        ROWS = findMax(maxX)+1;                     //Finds max X/ROWS value of the max values from srcX & destX
+        COLUMNS = findMax(maxY)+1;                  //Finds max Y/COLUMNS value of the max values from srcY & destY
 
-        System.out.println("Max X=" + ROWS + " Max Y=" + COLUMNS);
+//        System.out.println("Max X=" + ROWS + " Max Y=" + COLUMNS);
 
-        NODES = new int[COLUMNS][ROWS];             //Creates the NODES 2D array that will hold the graph nodes based on x & y coordinates
+        NODES = new Node[COLUMNS][ROWS];             //Creates the NODES 2D array that will hold the graph nodes based on x & y coordinates
+        initNodes();                                 //Initializes the NODES array with default NODES
 
         //Add source vertices to NODES
         for(int i = 0; i < count; i++){
@@ -94,7 +98,9 @@ public class WGraph {
         for(int i = 0; i < count; i++){
             addVertex(destX[i], destY[i]);
         }
-        print2DArray(NODES);
+        printNodes(1);                            //Print nodes from NODES 2D array
+        printNodes(0);                            //Print nodes from NODELIST
+
     }
 
     /**
@@ -150,7 +156,8 @@ public class WGraph {
     /* HELPER METHODS */
 
     private void addVertex(int x, int y) {
-        NODES[y][x] = 1;
+        NODES[y][x] = new Node(x, y);               //Adds node to NODES 2D array
+        NODELIST.add(NODES[y][x]);                  //Adds node to NODELIST
     }
 
     private int findMax(int [] a) {
@@ -160,6 +167,44 @@ public class WGraph {
                 max = a[i];
         }
         return max;
+    }
+
+    private Node getNode(int x, int y){
+        System.out.println(NODES[y][x].toString());
+        return NODES[y][x];
+    }
+
+    private void initNodes() {
+        for(int i = 0; i < COLUMNS; i++) {
+            for(int j = 0; j < ROWS; j++) {
+                NODES[i][j] = new Node(-1, -1);
+            }
+        }
+    }
+
+    /**
+     * Prints the nodes
+     * @param v if 1 print from NODES 2D array. if 0 print from NODELIST
+     */
+    private void printNodes(int v) {
+        if( v == 1) {
+            System.out.println("NODES 2D Array (START)");
+            for(int i = 0; i < COLUMNS; i++) {
+                //System.out.print(i + " ");
+                for(int j = 0; j < ROWS; j++) {
+                    System.out.print( NODES[i][j].toString() );
+                }
+                System.out.println();
+            }
+            System.out.println("NODES 2D Array (END)");
+        }else if( v == 0 ) {
+            System.out.print("NODELIST: ");
+            for(int i = 0; i < NODELIST.size()-1; i++) {
+                System.out.print( NODELIST.get(i).toString() );
+            }
+            System.out.println();
+        }
+
     }
 
     private void printArray(int[] a) {

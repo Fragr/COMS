@@ -21,4 +21,12 @@ public class Node {
     public int getY() {
         return Y;
     }
+
+    @Override
+    public String toString() {
+        if( X == -1 && Y == -1 )
+            return "{X}   ";
+        else
+            return "{" + X + "," + Y + "} ";
+    }
 }
