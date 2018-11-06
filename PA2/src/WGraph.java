@@ -195,14 +195,17 @@ public class WGraph {
     private void printNodes(int v) {
         if( v == 1) {
             System.out.println("NODES 2D Array (START)");
-            for(int i = 0; i < COLUMNS; i++) {
-                //System.out.print(i + " ");
+            for(int i = COLUMNS-1; i >= 0; i--) {
+                System.out.print(i + " ");
                 for(int j = 0; j < ROWS; j++) {
                     System.out.print( NODES[i][j].toString() );
                 }
                 System.out.println();
             }
-            System.out.println("NODES 2D Array (END)");
+            for(int i = 0; i < ROWS; i++){
+                System.out.print("    " + i + " ");
+            }
+            System.out.println();
         }else if( v == 0 ) {
             System.out.print("NODELIST: ");
             for(int i = 0; i < NODELIST.size(); i++) {
