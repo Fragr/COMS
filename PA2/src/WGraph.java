@@ -104,6 +104,8 @@ public class WGraph {
         getNode(5,6).info();
         getNode(7,8).info();
 
+        getNode(1,2).getVisibleNodes().get(0).getVisibleNodes().get(0).info();
+
 //        getNode(1,2).getWeight(getNode(3,4));           //Prints the weight between these two nodes
 //
 //        getNode(1,2).checkVisibilty(getNode(3,4));      //Checks if the 1st node can see the 2nd
