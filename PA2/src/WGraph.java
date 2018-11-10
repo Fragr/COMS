@@ -125,7 +125,10 @@ public class WGraph {
      *      in the returned path (path is an ordered sequence of vertices)
      */
     ArrayList<Integer> V2V(int ux, int uy, int vx, int vy) {
-        return null;
+        if( getNode(ux, uy).exists() && getNode(vx,vy).exists() ){              //Checks to make sure the nodes exist
+
+        }
+        return new ArrayList<>();
     }
 
     /**

@@ -1,16 +1,16 @@
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 public class Node {
 
     private int X;
     private int Y;
 
-    private LinkedList<Node> visibleNodes;
-    private LinkedList<Integer> weight;
+    private ArrayList<Node> visibleNodes;
+    private ArrayList<Integer> weight;
 
     public Node(int x, int y) {
-        visibleNodes = new LinkedList<>();
-        weight = new LinkedList<>();
+        visibleNodes = new ArrayList<>();
+        weight = new ArrayList<>();
         X = x;
         Y = y;
     }
@@ -47,14 +47,14 @@ public class Node {
     /**
      * @return the visibleNodes list
      */
-    public LinkedList<Node> getVisibleNodes() {
+    public ArrayList<Node> getVisibleNodes() {
        return visibleNodes;
     }
 
     /**
      * @return the weight list
      */
-    public LinkedList<Integer> getWeight() {
+    public ArrayList<Integer> getWeight() {
         return weight;
     }
 
@@ -88,6 +88,15 @@ public class Node {
      */
     public int getY() {
         return Y;
+    }
+
+    /**
+     * @return True if node X != -1 && Y != -1. False if they do
+     */
+    public boolean exists() {
+        if( getX() == -1 && getY() == -1 )
+            return false;
+        return true;
     }
 
     @Override
