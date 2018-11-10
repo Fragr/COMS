@@ -4,6 +4,7 @@ public class Node {
 
     private int X;
     private int Y;
+    private int distance;
 
     private ArrayList<Node> visibleNodes;
     private ArrayList<Integer> weight;
@@ -66,7 +67,7 @@ public class Node {
      * @param dest Node to getWeight
      * @@return the weight of the connection between this node and dest node
      */
-    public int getWeight(Node dest) {
+    public int getDistanceBetween(Node dest) {
         for( int i = 0; i < visibleNodes.size(); i++ ) {
             if( visibleNodes.get(i).equals(dest) ) {
                 System.out.println("Weight from " + toString() + "-> " + dest.toString() + "= " + weight.get(i));
@@ -75,6 +76,12 @@ public class Node {
         }
         return -1;
     }
+
+    public void setDistance(int d) {
+        distance = d;
+    }
+
+    public int getDistance() {return distance;}
 
     /**
      * @return X coordinate of this node
