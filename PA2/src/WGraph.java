@@ -44,11 +44,11 @@ public class WGraph {
         E = Integer.parseInt(s);
         System.out.println("Vertices = " + V + "\tEdges = " + E);
 
-        int srcX[] = new int[V];
-        int srcY[] = new int[V];
-        int destX[] = new int[V];
-        int destY[] = new int[V];
-        int weight[] = new int[V];
+        int srcX[] = new int[E];
+        int srcY[] = new int[E];
+        int destX[] = new int[E];
+        int destY[] = new int[E];
+        int weight[] = new int[E];
         int count = 0;
 
         //Loop through getting the srcX/Y location destX/Y location and weights from the file
@@ -96,12 +96,12 @@ public class WGraph {
         printNodes(1);                                                                       //Print nodes from NODES 2D array
         printNodes(0);                                                                       //Print nodes from NODELIST
 
-        getNode(1,2).info();        //Prints the nodes visible to this node and the weight between them
-        getNode(3,4).info();
-        getNode(5,6).info();
-        getNode(7,8).info();
-
-        getNode(1,2).getVisibleNodes().get(0).getVisibleNodes().get(0).info();
+//        getNode(1,2).info();        //Prints the nodes visible to this node and the weight between them
+//        getNode(3,4).info();
+//        getNode(5,6).info();
+//        getNode(7,8).info();
+//
+//        getNode(1,2).getVisibleNodes().get(0).getVisibleNodes().get(0).info();
 
 //        getNode(1,2).checkWeight(getNode(3,4));           //Prints the weight between these two nodes
 //
@@ -124,10 +124,16 @@ public class WGraph {
      *      in the returned path (path is an ordered sequence of vertices)
      */
     ArrayList<Integer> V2V(int ux, int uy, int vx, int vy) {
-        boolean[] previous;
-        if( getNode(ux, uy).exists() && getNode(vx,vy).exists() ){              //Checks to make sure the nodes exist
-            previous = dijkstra( getNode(ux, uy) );
-            System.out.println(previous[0]);
+        Node src = getNode(ux, uy);
+        Node dest = getNode(vx, vy);
+
+        Node previous = dijkstra( src );
+        for( Node n : NODELIST ) {
+            if( n.getPrevious().exists() ) {
+                System.out.print(n.toString());
+                printPreviousNodes(n);
+                System.out.println();
+            }
         }
         return new ArrayList<>();
     }
@@ -168,13 +174,13 @@ public class WGraph {
 
     /* HELPER METHODS */
 
-    private boolean[] dijkstra(Node src) {
-        int dist[] = new int[V];
-        boolean previous[] = new boolean[V];
+    private Node dijkstra(Node src) {
 
-        for( int i = 0; i < V; i++ ) {
-            dist[i] = Integer.MAX_VALUE;
-            previous[i] = false;
+        for( Node n : NODELIST ) {
+            getNode(n).setDistance(Integer.MAX_VALUE);
+            getNode(n).setPrevious(null);
+//            dist[i] = Integer.MAX_VALUE;
+//            previous[i] = false;
 //            dist[i] = NODELIST.get(i);
 //            if( NODELIST.get(i).equals(src) ) {
 //                NODELIST.get(i).setDistance(0);
@@ -184,42 +190,60 @@ public class WGraph {
 //            }
         }
 
-        dist[getNodeIndex(src)] = 0;
+        getNode(src).setDistance(0);
 
         ArrayList<Node> Q = new ArrayList<>();
-        //Add nodes to Q
-        for( Node n : NODELIST ) {
-            Q.add(n);
-        }
+
+        for( Node n : NODELIST ) Q.add(n);              //Add nodes to Q
+
+        Node previous = Q.get(0);
 
         while( !Q.isEmpty() ) {
-            Node U = Q.remove(getMinDistance(dist, previous));
+            Node U = Q.remove(getMinDistance(Q));
 
             ArrayList<Node> visibleNodesOfU = U.getVisibleNodes();
 
             for( Node v : visibleNodesOfU ) {
-                int uDist = dist[getNodeIndex(U)];
-                int distanceBetween = getNode(U.getX(), U.getY()).getDistanceBetween(v);
-                int alt = uDist + distanceBetween;
-                if( alt < dist[getNodeIndex(v)] ) {
-                    dist[getNodeIndex(v)] = alt;
-                    previous[getNodeIndex(v)] = true;
-                    //previous[getIndex(v, dist)] = v;
+                if( Q.contains(v) ) {
+                    int uDist = getNode(U).getDistance();
+                    int distanceBetween = getNode(U).getDistanceBetween(v);
+                    int alt = uDist + distanceBetween;
+                    if( alt < getNode(v).getDistance() ) {
+                        getNode(v).setDistance(alt);
+                        getNode(v).setPrevious(U);
+                        previous = getNode(v);
+                    }
                 }
+
             }
         }
         return previous;
     }
 
-    private int getMinDistance(int[] dist, boolean[] previous) {
-        int min = Integer.MAX_VALUE, minIndex = -1;
+    private void printPreviousNodes(Node n) {
+            if( n.getPrevious().exists() ) {
+                System.out.print(" -> " + n.getPrevious().toString() /*+ " W=" + n.getDistance() + " "*/);
+                printPreviousNodes(n.getPrevious());
+            }
+    }
 
-        for( int i = 0; i < V; i++ ) {
-            if( previous[i] == false && dist[i] <= min ) {
-                min = dist[i];
+    private int getMinDistance(ArrayList<Node> Q) {
+        int min = Q.get(0).getDistance(), minIndex = 0;
+
+        for( int i = 0; i < Q.size(); i++ ) {
+            Node n = Q.get(i);             //Make sure distance is updated
+            if( n.getDistance() < min ) {
+                min = n.getDistance();
                 minIndex = i;
             }
         }
+//        for( int i = 0; i < V; i++ ) {
+//            if( previous[i] == false && dist[i] <= min ) {
+//                min = dist[i];
+//                minIndex = i;
+//            }
+//        }
+//        return minIndex;
         return minIndex;
     }
 
@@ -261,6 +285,10 @@ public class WGraph {
         return max;
     }
 
+    /**
+     * @param n Node to get index of
+     * @return the index of input node in NODELIST
+     */
     private int getNodeIndex(Node n) {
         int count = 0;
         for( Node u : NODELIST ) {

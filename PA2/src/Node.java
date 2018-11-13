@@ -5,6 +5,7 @@ public class Node {
     private int X;
     private int Y;
     private int distance;
+    private Node previous;
 
     private ArrayList<Node> visibleNodes;
     private ArrayList<Integer> weight;
@@ -29,7 +30,7 @@ public class Node {
             visibleNodes.add(dest);
             weight.add(w);
         }
-        System.out.println("ERROR: These nodes are already connected!");
+        //System.out.println("ERROR: These nodes are already connected!");
     }
 
     /**
@@ -75,6 +76,16 @@ public class Node {
             }
         }
         return -1;
+    }
+
+    public Node getPrevious() {
+        if (previous == null)
+            return new Node(-1, -1);
+        return previous;
+    }
+
+    public void setPrevious(Node src) {
+        previous = src;
     }
 
     public void setDistance(int d) {
