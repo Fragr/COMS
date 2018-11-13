@@ -84,7 +84,7 @@ public class WGraph {
         ROWS = findMax(maxX)+1;                                                                 //Finds max X/ROWS value of the max values from srcX & destX
         COLUMNS = findMax(maxY)+1;                                                              //Finds max Y/COLUMNS value of the max values from srcY & destY
 
-//        System.out.println("Max X=" + ROWS + " Max Y=" + COLUMNS);
+        System.out.println("Max X=" + ROWS + " Max Y=" + COLUMNS);
 
         NODES = new Node[COLUMNS][ROWS];                                                        //Creates the NODES 2D array that will hold the graph nodes based on x & y coordinates
         initNodes();                                                                            //Initializes the NODES array with default NODES
@@ -109,7 +109,7 @@ public class WGraph {
 //
 //        getNode(1,2).checkVisibilty(getNode(3,4));      //Checks if the 1st node can see the 2nd
 
-        V2V(1,2, 3, 4);
+        V2V(1,1, 3, 10);
 
     }
 
@@ -127,17 +127,18 @@ public class WGraph {
      *      in the returned path (path is an ordered sequence of vertices)
      */
     ArrayList<Integer> V2V(int ux, int uy, int vx, int vy) {
-        Node src = getNode(ux, uy);
-        Node dest = getNode(vx, vy);
+        if( ux < ROWS &&  uy < COLUMNS && vx < ROWS && vy < COLUMNS ){
+            Node src = getNode(ux, uy);
+            Node dest = getNode(vx, vy);
+            dijkstra(src);
 
-        dijkstra(src);
+            System.out.print(dest.toString());
+            previous.add(dest);
+            printPreviousNodes(dest);
+            System.out.print( "Size: " + previous.size());
+            //TODO convert to integer arraylist
 
-        System.out.print(dest.toString());
-        previous.add(dest);
-        printPreviousNodes(dest);
-        System.out.print( "Size: " + previous.size());
-        //TODO convert to integer arraylist
-
+        }
 //        for( Node n : NODELIST ) {
 //            if( n.getPrevious().exists() ) {
 //                System.out.print(n.toString());
