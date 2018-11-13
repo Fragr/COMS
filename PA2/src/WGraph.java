@@ -15,6 +15,7 @@ public class WGraph {
 
     private Node[][] NODES;
     private ArrayList<Node> NODELIST;
+    private ArrayList<Node> previous;
 
     /**
      * Reads the file from FName from the same directory
@@ -31,6 +32,7 @@ public class WGraph {
      */
     public WGraph(String FName) throws FileNotFoundException {
         NODELIST = new ArrayList<>();
+        previous = new ArrayList<>();
 
         File file = new File(FName);
 
@@ -119,22 +121,30 @@ public class WGraph {
      * @param vx valid x coordinate of vertex v
      * @param vy valid y coordinate of vertex v
      * @return arraylist contains even number of integers,
-     *      for any even i, i-th and i+1-th integers in the array
-     *      represent the x-coordinate and y-coordinate of the i-th vertex
+     *      for any even i,
+     *      i-th and i+1-th integers in the array
+     *      represent the x-coordinate and y-coordinate of the i/2-th vertex
      *      in the returned path (path is an ordered sequence of vertices)
      */
     ArrayList<Integer> V2V(int ux, int uy, int vx, int vy) {
         Node src = getNode(ux, uy);
         Node dest = getNode(vx, vy);
 
-        Node previous = dijkstra( src );
-        for( Node n : NODELIST ) {
-            if( n.getPrevious().exists() ) {
-                System.out.print(n.toString());
-                printPreviousNodes(n);
-                System.out.println();
-            }
-        }
+        dijkstra(src);
+
+        System.out.print(dest.toString());
+        previous.add(dest);
+        printPreviousNodes(dest);
+        System.out.print( "Size: " + previous.size());
+        //TODO convert to integer arraylist
+
+//        for( Node n : NODELIST ) {
+//            if( n.getPrevious().exists() ) {
+//                System.out.print(n.toString());
+//                printPreviousNodes(n);
+//                System.out.println();
+//            }
+//        }
         return new ArrayList<>();
     }
 
@@ -175,19 +185,11 @@ public class WGraph {
     /* HELPER METHODS */
 
     private Node dijkstra(Node src) {
+        previous = new ArrayList<>();                               //reset previous ArrayList
 
         for( Node n : NODELIST ) {
             getNode(n).setDistance(Integer.MAX_VALUE);
             getNode(n).setPrevious(null);
-//            dist[i] = Integer.MAX_VALUE;
-//            previous[i] = false;
-//            dist[i] = NODELIST.get(i);
-//            if( NODELIST.get(i).equals(src) ) {
-//                NODELIST.get(i).setDistance(0);
-//            }else{
-//                NODELIST.get(i).setDistance(Integer.MAX_VALUE);
-//                previous[i] = null;
-//            }
         }
 
         getNode(src).setDistance(0);
@@ -222,7 +224,8 @@ public class WGraph {
 
     private void printPreviousNodes(Node n) {
             if( n.getPrevious().exists() ) {
-                System.out.print(" -> " + n.getPrevious().toString() /*+ " W=" + n.getDistance() + " "*/);
+                previous.add(n.getPrevious());
+                System.out.print("-> " + n.getPrevious().toString() /*+ " W=" + n.getDistance() + " "*/);
                 printPreviousNodes(n.getPrevious());
             }
     }

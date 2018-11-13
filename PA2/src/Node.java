@@ -71,7 +71,7 @@ public class Node {
     public int getDistanceBetween(Node dest) {
         for( int i = 0; i < visibleNodes.size(); i++ ) {
             if( visibleNodes.get(i).equals(dest) ) {
-                System.out.println("Weight from " + toString() + "-> " + dest.toString() + "= " + weight.get(i));
+                //System.out.println("Weight from " + toString() + "-> " + dest.toString() + "= " + weight.get(i));
                 return weight.get(i);
             }
         }
