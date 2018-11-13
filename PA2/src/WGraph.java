@@ -136,7 +136,7 @@ public class WGraph {
             previous.add(dest);
             printPreviousNodes(dest);
             System.out.print( "Size: " + previous.size());
-            //TODO convert to integer arraylist
+            //TODO convert to integer arraylist & reverse direction of previous list
 
         }
 //        for( Node n : NODELIST ) {
