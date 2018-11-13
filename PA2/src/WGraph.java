@@ -162,7 +162,24 @@ public class WGraph {
      *      in the returned path (path is an ordered sequence of vertices)
      */
     ArrayList<Integer> V2S(int ux, int uy, ArrayList<Integer> S) {
-        return null;
+        //TODO calculate the path distance from each Node in the S list to the src x & y to determine which is the shortest
+        ArrayList<Integer> path = new ArrayList<>();
+        if( ux < ROWS &&  uy < COLUMNS && vx < ROWS && vy < COLUMNS ){
+            Node src = getNode(ux, uy);
+            Node dest = getNode(vx, vy);
+            dijkstra(src);
+
+            System.out.print(dest.toString());
+            previous.add(dest);
+            createPreviousNodes(dest);
+            System.out.print( "Size: " + previous.size());
+            //convert to integer arraylist & reverse direction of previous list
+            for( int i = previous.size()-1; i >= 0; i--) {
+                path.add(previous.get(i).getX());
+                path.add(previous.get(i).getY());
+            }
+        }
+        return path;
     }
 
     /**
