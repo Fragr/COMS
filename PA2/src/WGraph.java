@@ -222,12 +222,26 @@ public class WGraph {
         return previous;
     }
 
-    private void printPreviousNodes(Node n) {
-            if( n.getPrevious().exists() ) {
-                previous.add(n.getPrevious());
-                System.out.print("-> " + n.getPrevious().toString() /*+ " W=" + n.getDistance() + " "*/);
-                printPreviousNodes(n.getPrevious());
+    private int findMax(int [] a) {
+        int max = a[0];
+        for(int i = 1; i < a.length; i++){
+            if( a[i] > max )
+                max = a[i];
+        }
+        return max;
+    }
+
+    private void addVertex(int x, int y) {
+        //Check to see if the node already exists in the NODELIST
+        for(Node n : NODELIST){
+            if( n.equals(NODES[y][x]) ){
+                //System.out.println("ERROR: Node already exists!");
+                return;
             }
+        }
+
+        NODES[y][x] = new Node(x, y);               //Adds node to NODES 2D array
+        NODELIST.add(NODES[y][x]);                  //Adds node to NODELIST
     }
 
     private int getMinDistance(ArrayList<Node> Q) {
@@ -248,59 +262,6 @@ public class WGraph {
 //        }
 //        return minIndex;
         return minIndex;
-    }
-
-    /**
-     * @param dist int array
-     * @return the index of the smallest # from the input
-     */
-    private int getMinIndex(int[] dist) {
-        int min = dist[0];
-        int minIndex = 0;
-        for(int i = 1; i < dist.length; i++){
-            if( dist[i] < min ) {
-                min = dist[i];
-                minIndex = i;
-            }
-        }
-        return minIndex;
-    }
-
-    private void addVertex(int x, int y) {
-        //Check to see if the node already exists in the NODELIST
-        for(Node n : NODELIST){
-            if( n.equals(NODES[y][x]) ){
-                //System.out.println("ERROR: Node already exists!");
-                return;
-            }
-        }
-
-        NODES[y][x] = new Node(x, y);               //Adds node to NODES 2D array
-        NODELIST.add(NODES[y][x]);                  //Adds node to NODELIST
-    }
-
-    private int findMax(int [] a) {
-        int max = a[0];
-        for(int i = 1; i < a.length; i++){
-            if( a[i] > max )
-                max = a[i];
-        }
-        return max;
-    }
-
-    /**
-     * @param n Node to get index of
-     * @return the index of input node in NODELIST
-     */
-    private int getNodeIndex(Node n) {
-        int count = 0;
-        for( Node u : NODELIST ) {
-            if( u.equals(n) ) {
-                return count;
-            }
-            count++;
-        }
-        return -1;
     }
 
     private Node getNode(Node n) {
@@ -346,6 +307,14 @@ public class WGraph {
             System.out.println();
         }
 
+    }
+
+    private void printPreviousNodes(Node n) {
+        if( n.getPrevious().exists() ) {
+            previous.add(n.getPrevious());
+            System.out.print("-> " + n.getPrevious().toString() /*+ " W=" + n.getDistance() + " "*/);
+            printPreviousNodes(n.getPrevious());
+        }
     }
 
     private void printArray(int[] a) {
