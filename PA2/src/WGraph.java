@@ -199,7 +199,16 @@ public class WGraph {
 
     /* HELPER METHODS */
 
-    private Node dijkstra(Node src) {
+    /**
+     * From the source node it finds the shortest path to ALL
+     * nodes/vertices contained within the graph. After running
+     * you can find the shortest path by looking at a node &
+     * recursively going through the previous node until you reach
+     * the src node.
+     *
+     * @param src Node to start the search from
+     */
+    private void dijkstra(Node src) {
         previous = new ArrayList<>();                               //reset previous ArrayList
 
         for( Node n : NODELIST ) {
@@ -234,7 +243,6 @@ public class WGraph {
 
             }
         }
-        return previous;
     }
 
     private int findMax(int [] a) {
