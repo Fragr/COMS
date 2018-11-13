@@ -109,7 +109,7 @@ public class WGraph {
 //
 //        getNode(1,2).checkVisibilty(getNode(3,4));      //Checks if the 1st node can see the 2nd
 
-        V2V(1,1, 3, 10);
+//        V2V(1,1, 3, 10);
 
     }
 
@@ -127,6 +127,7 @@ public class WGraph {
      *      in the returned path (path is an ordered sequence of vertices)
      */
     ArrayList<Integer> V2V(int ux, int uy, int vx, int vy) {
+        ArrayList<Integer> path = new ArrayList<>();
         if( ux < ROWS &&  uy < COLUMNS && vx < ROWS && vy < COLUMNS ){
             Node src = getNode(ux, uy);
             Node dest = getNode(vx, vy);
@@ -134,19 +135,15 @@ public class WGraph {
 
             System.out.print(dest.toString());
             previous.add(dest);
-            printPreviousNodes(dest);
+            createPreviousNodes(dest);
             System.out.print( "Size: " + previous.size());
-            //TODO convert to integer arraylist & reverse direction of previous list
-
+            //convert to integer arraylist & reverse direction of previous list
+            for( int i = previous.size()-1; i >= 0; i--) {
+                path.add(previous.get(i).getX());
+                path.add(previous.get(i).getY());
+            }
         }
-//        for( Node n : NODELIST ) {
-//            if( n.getPrevious().exists() ) {
-//                System.out.print(n.toString());
-//                printPreviousNodes(n);
-//                System.out.println();
-//            }
-//        }
-        return new ArrayList<>();
+        return path;
     }
 
     /**
@@ -274,6 +271,14 @@ public class WGraph {
         return NODES[y][x];
     }
 
+    private void createPreviousNodes(Node n) {
+        if( n.getPrevious().exists() ) {
+            previous.add(n.getPrevious());
+            System.out.print("-> " + n.getPrevious().toString() /*+ " W=" + n.getDistance() + " "*/);
+            createPreviousNodes(n.getPrevious());
+        }
+    }
+
     private void initNodes() {
         for(int i = 0; i < COLUMNS; i++) {
             for(int j = 0; j < ROWS; j++) {
@@ -308,14 +313,6 @@ public class WGraph {
             System.out.println();
         }
 
-    }
-
-    private void printPreviousNodes(Node n) {
-        if( n.getPrevious().exists() ) {
-            previous.add(n.getPrevious());
-            System.out.print("-> " + n.getPrevious().toString() /*+ " W=" + n.getDistance() + " "*/);
-            printPreviousNodes(n.getPrevious());
-        }
     }
 
     private void printArray(int[] a) {
