@@ -14,6 +14,6 @@ public class PJTest {
         set.add(3);
         set.add(9);
         path = g.V2S(1, 1, set);
-        System.out.println("\n" + Arrays.toString(path.toArray()) + " Size: " + path.size());
+        System.out.println("\n" + Arrays.toString(path.toArray()) + " Size: " + path.size() + " #Nodes: " + path.size()/2);
     }
 }

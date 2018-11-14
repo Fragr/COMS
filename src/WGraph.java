@@ -95,9 +95,9 @@ public class WGraph {
         initNodes();                                                                            //Initializes the NODES array with default NODES
 
         for(int i = 0; i < count; i++){
-            addVertex(srcX[i], srcY[i]);                                                        //Add source vertices to NODES
-            addVertex(destX[i], destY[i]);                                                      //Add destination vertices to NODES
-            getNode(srcX[i], srcY[i]).createEdge(getNode(destX[i],destY[i]), weight[i]);           //Creates an edge between the src and dest nodes
+            addNode(srcX[i], srcY[i]);                                                          //Add source vertices to NODES
+            addNode(destX[i], destY[i]);                                                        //Add destination vertices to NODES
+            getNode(srcX[i], srcY[i]).createEdge(getNode(destX[i],destY[i]), weight[i]);        //Creates an edge between the src and dest nodes
         }
 
         printNodes(1);                                                                       //Print nodes from NODES 2D array
@@ -291,7 +291,20 @@ public class WGraph {
         return minIndex;
     }
 
-    private void addVertex(int x, int y) {
+    private int getMinDistance(ArrayList<Node> Q) {
+        int min = Q.get(0).getDistance(), minIndex = 0;
+
+        for( int i = 0; i < Q.size(); i++ ) {
+            Node n = Q.get(i);             //Make sure distance is updated
+            if( n.getDistance() < min ) {
+                min = n.getDistance();
+                minIndex = i;
+            }
+        }
+        return minIndex;
+    }
+
+    private void addNode(int x, int y) {
         //Check to see if the node already exists in the NODELIST
         for(Node n : NODELIST){
             if( n.equals(NODES[y][x]) ){
@@ -304,32 +317,11 @@ public class WGraph {
         NODELIST.add(NODES[y][x]);                  //Adds node to NODELIST
     }
 
-    private int getMinDistance(ArrayList<Node> Q) {
-        int min = Q.get(0).getDistance(), minIndex = 0;
-
-        for( int i = 0; i < Q.size(); i++ ) {
-            Node n = Q.get(i);             //Make sure distance is updated
-            if( n.getDistance() < min ) {
-                min = n.getDistance();
-                minIndex = i;
-            }
-        }
-//        for( int i = 0; i < V; i++ ) {
-//            if( previous[i] == false && dist[i] <= min ) {
-//                min = dist[i];
-//                minIndex = i;
-//            }
-//        }
-//        return minIndex;
-        return minIndex;
-    }
-
     private Node getNode(Node n) {
         return NODES[n.getY()][n.getX()];
     }
 
     private Node getNode(int x, int y) {
-        //System.out.println(NODES[y][x].toString());
         return NODES[y][x];
     }
 
