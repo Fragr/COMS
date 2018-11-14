@@ -11,8 +11,8 @@ public class PJTest {
         ArrayList<Integer> set = new ArrayList<>();
         set.add(3);
         set.add(10);
-        set.add(1);
         set.add(3);
+        set.add(9);
         path = g.V2S(1, 1, set);
         System.out.println("\n" + Arrays.toString(path.toArray()) + " Size: " + path.size());
     }

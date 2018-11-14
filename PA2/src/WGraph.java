@@ -162,7 +162,6 @@ public class WGraph {
      *      in the returned path (path is an ordered sequence of vertices)
      */
     ArrayList<Integer> V2S(int ux, int uy, ArrayList<Integer> S) {
-        //TODO calculate the path distance from each Node in the S list to the src x & y to determine which is the shortest
         ArrayList<Integer> path = new ArrayList<>();
         if( ux < ROWS &&  uy < COLUMNS ){
             Node src = getNode(ux, uy);
@@ -184,12 +183,12 @@ public class WGraph {
                 previous.add(n);
                 createPreviousNodes(n);
                 System.out.print( "Size: " + previous.size() + "\n");
-                distance[index] = previous.size();
+                distance[index] = previous.size();          //Save the distance from src to n @ index
                 index++;
                 previous = new ArrayList<>();
             }
 
-            int minIndex = findMinIndex(distance);          //Find which node in S has the smallest size
+            int minIndex = findMinIndex(distance);          //Find which node in S has the smallest path size from src
 
             System.out.print(dest.get(minIndex).toString());
             previous.add(dest.get(minIndex));
