@@ -155,24 +155,47 @@ public class WGraph {
      * @param S represents a set of vertices. Contains an even # of
      *      integers for any even i, i-th & i+1-th integers
      *      in the array represent the x-coordinate and y-coordinate
-     *      of the i-th vertex in the set S.
+     *      of the i/2-th vertex in the set S.
      * @return arraylist contains even number of integers,
      *      for any even i, i-th and i+1-th integers in the array
-     *      represent the x-coordinate and y-coordinate of the i-th vertex
+     *      represent the x-coordinate and y-coordinate of the i/2-th vertex
      *      in the returned path (path is an ordered sequence of vertices)
      */
     ArrayList<Integer> V2S(int ux, int uy, ArrayList<Integer> S) {
         //TODO calculate the path distance from each Node in the S list to the src x & y to determine which is the shortest
         ArrayList<Integer> path = new ArrayList<>();
-        if( ux < ROWS &&  uy < COLUMNS && vx < ROWS && vy < COLUMNS ){
+        if( ux < ROWS &&  uy < COLUMNS ){
             Node src = getNode(ux, uy);
-            Node dest = getNode(vx, vy);
+
             dijkstra(src);
 
-            System.out.print(dest.toString());
-            previous.add(dest);
-            createPreviousNodes(dest);
-            System.out.print( "Size: " + previous.size());
+            ArrayList<Node> dest = new ArrayList<>();
+            for( int i = 0; i < S.size(); i += 2 ) {        //Take the x & y values from S & put them into a Node arraylist
+                int x = S.get(i);
+                int y = S.get(i+1);
+                dest.add(getNode(x, y));
+            }
+
+            //For each node from S, check the distance back to src node
+            int[] distance = new int[dest.size()];          //Array that holds distance from src to dest
+            int index = 0;
+            for( Node n :  dest ) {
+                System.out.print(n.toString());
+                previous.add(n);
+                createPreviousNodes(n);
+                System.out.print( "Size: " + previous.size() + "\n");
+                distance[index] = previous.size();
+                index++;
+                previous = new ArrayList<>();
+            }
+
+            int minIndex = findMinIndex(distance);          //Find which node in S has the smallest size
+
+            System.out.print(dest.get(minIndex).toString());
+            previous.add(dest.get(minIndex));
+            createPreviousNodes(dest.get(minIndex));
+            System.out.print( "Size: " + previous.size() + "\n");
+
             //convert to integer arraylist & reverse direction of previous list
             for( int i = previous.size()-1; i >= 0; i--) {
                 path.add(previous.get(i).getX());
@@ -222,8 +245,6 @@ public class WGraph {
 
         for( Node n : NODELIST ) Q.add(n);              //Add nodes to Q
 
-        Node previous = Q.get(0);
-
         while( !Q.isEmpty() ) {
             Node U = Q.remove(getMinDistance(Q));
 
@@ -237,7 +258,6 @@ public class WGraph {
                     if( alt < getNode(v).getDistance() ) {
                         getNode(v).setDistance(alt);
                         getNode(v).setPrevious(U);
-                        previous = getNode(v);
                     }
                 }
 
@@ -252,6 +272,18 @@ public class WGraph {
                 max = a[i];
         }
         return max;
+    }
+
+    private int findMinIndex(int [] a) {
+        int min = a[0];
+        int minIndex = 0;
+        for(int i = 1; i < a.length; i++){
+            if( a[i] < min ) {
+                min = a[i];
+                minIndex = i;
+            }
+        }
+        return minIndex;
     }
 
     private void addVertex(int x, int y) {
