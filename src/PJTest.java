@@ -1,47 +1,19 @@
-
-/**
- * @author Peter DeBisschop (pjd), Kyle Zelnio (kjzelnio)
- */
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class PJTest {
 
-    static PriorityQ heap;
-
-    public static void test() {
-        PriorityQ heap = new PriorityQ();
-
-
-//        heap.printParent(0);
-//        heap.printChildren(0);
-//
-        int[] heapPriorityArray = heap.priorityArray();
-        print(heapPriorityArray);
-    }
-
-    /**
-     * Add nodes to the priorityQ
-     * @param x number off nodes to add
-     */
-    static void addNodes(int x) {
-        char[] alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
-
-        for(int i = 0; i < x; i++){
-            char c = alphabet[i];
-//            heap.add(new Node(Character.toString(c), i));
-//            heap.print();
-        }
-    }
-
-    static void print(int[] a) {
-        System.out.println();
-        System.out.print("Priority Array {");
-        for(int i = 0; i < a.length; i++) {
-            if( i < a.length-1 )
-                System.out.print(a[i] + ", ");
-            else
-                System.out.print(a[i]);
-
-        }
-        System.out.print("}");
+    public static void test() throws FileNotFoundException {
+        WGraph g = new WGraph("input.txt");
+        ArrayList<Integer> path = g.V2V(1,1,3,10);
+        System.out.println("\n" + Arrays.toString(path.toArray()) + " Size: " + path.size());
+        ArrayList<Integer> set = new ArrayList<>();
+        set.add(3);
+        set.add(10);
+        set.add(3);
+        set.add(9);
+        path = g.V2S(1, 1, set);
+        System.out.println("\n" + Arrays.toString(path.toArray()) + " Size: " + path.size());
     }
 }
