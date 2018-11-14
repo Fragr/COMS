@@ -8,7 +8,8 @@ import java.util.Scanner;
 /**
  * @author Peter DeBisschop (pjd), Kyle Zelnio (kjzelnio)
  */
-
+//TODO Clean up file (Delete unneeded comments)
+//TODO Add comments where needed
 public class WGraph {
 
     private int V;
@@ -220,6 +221,7 @@ public class WGraph {
      *      in the returned path (path is an ordered sequence of vertices)
      */
     ArrayList<Integer> S2S(ArrayList<Integer> S1, ArrayList<Integer> S2) {
+        //TODO
         return null;
     }
 

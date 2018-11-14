@@ -33,22 +33,18 @@ public class Node {
      */
     public void setKey(int key) { this.key = key; }
 
-    //TODO Remove only for JUNIT
     public int getPriority() {
         return key;
     }
 
-    //TODO Remove only for JUNIT
     public String getString() {
         return value;
     }
 
-    //TODO Remove only for JUNIT
     public void setPriority(int i) {
         key = i;
     }
 
-    //TODO Remove only for JUNIT
     @Override
     public boolean equals(Object o) {
         if(!(o instanceof Node)) {
