@@ -167,6 +167,7 @@ public class WGraph {
      *      in the returned path (path is an ordered sequence of vertices)
      */
     ArrayList<Integer> V2S(int ux, int uy, ArrayList<Integer> S) {
+        //TODO reimplement by using V2V
         ArrayList<Integer> path = new ArrayList<>();
         if( ux < ROWS &&  uy < COLUMNS ){
             Node src = getNode(ux, uy);
