@@ -221,8 +221,21 @@ public class WGraph {
      *      in the returned path (path is an ordered sequence of vertices)
      */
     ArrayList<Integer> S2S(ArrayList<Integer> S1, ArrayList<Integer> S2) {
-        //TODO
-        return null;
+        ArrayList<ArrayList<Integer>> V2Sout = new ArrayList<>();
+
+        for( int i = 0; i < S1.size(); i += 2 ) {
+            V2Sout.add(V2S(S1.get(i), S1.get(i+1), S2));
+        }
+
+        int minDistance = V2Sout.get(0).size()/2;
+        int minIndex = 0;
+        for( int i = 0; i < V2Sout.size(); i++ ) {
+            if( V2Sout.get(i).size()/2 < minDistance ) {
+                minDistance = V2Sout.get(i).size()/2;
+                minIndex = i;
+            }
+        }
+        return V2Sout.get(minIndex);
     }
 
     /* HELPER METHODS */
