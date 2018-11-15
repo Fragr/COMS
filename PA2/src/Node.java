@@ -112,7 +112,7 @@ public class Node {
      * @return True if node X != -1 && Y != -1. False if they do
      */
     public boolean exists() {
-        if( getX() == -1 && getY() == -1 )
+        if( (getX() == -1 && getY() == -1) || visibleNodes == null )
             return false;
         return true;
     }
