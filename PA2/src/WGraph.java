@@ -38,6 +38,10 @@ public class WGraph {
         NODELIST = new ArrayList<>();
         previous = new ArrayList<>();
 
+        if( !FName.contains(".txt") ){              //Check to see if file has .txt at end
+            FName = FName.concat(".txt");           //If not add it then continue
+        }
+
         URL url = getClass().getResource(FName);
         File file = new File(url.getPath());
 
@@ -49,13 +53,13 @@ public class WGraph {
         V = Integer.parseInt(s);
         s = sc.nextLine();
         E = Integer.parseInt(s);
-//        System.out.println("Vertices = " + V + "\tEdges = " + E);
+        System.out.println("Vertices = " + V + "\tEdges = " + E);
 
-        int srcX[] = new int[E];
-        int srcY[] = new int[E];
-        int destX[] = new int[E];
-        int destY[] = new int[E];
-        int weight[] = new int[E];
+        int srcX[] = new int[E+1];
+        int srcY[] = new int[E+1];
+        int destX[] = new int[E+1];
+        int destY[] = new int[E+1];
+        int weight[] = new int[E+1];
         int count = 0;
 
         //Loop through getting the srcX/Y location destX/Y location and weights from the file
@@ -100,8 +104,8 @@ public class WGraph {
             getNode(srcX[i], srcY[i]).createEdge(getNode(destX[i],destY[i]), weight[i]);        //Creates an edge between the src and dest nodes
         }
 
-//        printNodes(1);                                                                       //Print nodes from NODES 2D array
-//        printNodes(0);                                                                       //Print nodes from NODELIST
+        printNodes(1);                                                                       //Print nodes from NODES 2D array
+        printNodes(0);                                                                       //Print nodes from NODELIST
 
 //        getNode(1,2).info();        //Prints the nodes visible to this node and the weight between them
 //        getNode(3,4).info();
@@ -284,18 +288,22 @@ public class WGraph {
 
             ArrayList<Node> visibleNodesOfU = U.getVisibleNodes();
 
-            for( Node v : visibleNodesOfU ) {
-                if( Q.contains(v) ) {
-                    int uDist = getNode(U).getDistance();
-                    int distanceBetween = getNode(U).getDistanceBetween(v);
-                    int alt = uDist + distanceBetween;
-                    if( alt < getNode(v).getDistance() ) {
-                        getNode(v).setDistance(alt);
-                        getNode(v).setPrevious(U);
+            if( visibleNodesOfU.size() > 0 ) {
+                for( Node v : visibleNodesOfU ) {
+                    if( Q.contains(v) ) {
+                        int uDist = getNode(U).getDistance();
+                        int distanceBetween = getNode(U).getDistanceBetween(v);
+                        int alt = uDist + distanceBetween;
+                        if( alt < getNode(v).getDistance() ) {
+                            getNode(v).setDistance(alt);
+                            getNode(v).setPrevious(U);
+                        }
                     }
                 }
-
+            }else{
+                return;
             }
+
         }
     }
 
@@ -354,6 +362,15 @@ public class WGraph {
         return NODES[y][x];
     }
 
+    public ArrayList<Node> getNODELIST() { return NODELIST; }
+
+    /**
+     * From the input Node it recursively goes to each previous
+     * node until there is no previous node. While doing this it
+     * also prints them out to visually see.
+     *
+     * @param n Node to start getting previous nodes at
+     */
     private void createPreviousNodes(Node n) {
         if( n.getPrevious().exists() ) {
             previous.add(n.getPrevious());

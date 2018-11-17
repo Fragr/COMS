@@ -1,14 +1,14 @@
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Test;
-
 import java.io.IOException;
 import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.*;
+//import org.junit.AfterClass;
+//import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Test;
 
-public class P1tests {
+public class GraphTest {
     static long vtovaverage;
     static long stovaverage;
     static long stosaverage;
@@ -145,22 +145,22 @@ public class P1tests {
         stovaverage += finalTime;
     }
 
-//    @Test
-//    void testS2V2() throws IOException {
-//        long start = System.nanoTime();
-//        WGraph wg = new WGraph("example.txt");
-//        ArrayList<Integer> solution = new ArrayList<Integer>();
-//        ArrayList<Integer> s = new ArrayList<Integer>();
-//        s.add(4);
-//        s.add(4);
-//        s.add(5);
-//        s.add(6);
-//        s.add(3);
-//        s.add(4);
-//        assertEquals(solution, wg.V2S(1, 5, s));
-//        long finalTime = System.nanoTime() - start;
-//        stovaverage += finalTime;
-//    }
+    @Test
+    void testS2V2() throws IOException {
+        long start = System.nanoTime();
+        WGraph wg = new WGraph("example.txt");
+        ArrayList<Integer> solution = new ArrayList<Integer>();
+        ArrayList<Integer> s = new ArrayList<Integer>();
+        s.add(4);
+        s.add(4);
+        s.add(5);
+        s.add(6);
+        s.add(3);
+        s.add(4);
+        assertEquals(solution, wg.V2S(1, 5, s));
+        long finalTime = System.nanoTime() - start;
+        stovaverage += finalTime;
+    }
 
     @Test
     void testS2V3() throws IOException {
@@ -253,25 +253,27 @@ public class P1tests {
         stosaverage += finalTime;
     }
 
-//    @Test
-//    void testS2S2() throws IOException {
-//        long start = System.nanoTime();
-//        WGraph wg = new WGraph("example.txt");
-//        ArrayList<Integer> solution = new ArrayList<Integer>();
-//        ArrayList<Integer> s1 = new ArrayList<Integer>();
-//        s1.add(4);
-//        s1.add(4);
-//        ArrayList<Integer> s2 = new ArrayList<Integer>();
-//        s2.add(5);
-//        s2.add(6);
-//        s2.add(3);
-//        s2.add(4);
-////        solution.add(4);
-////        solution.add(4);
-//        assertEquals(solution, wg.S2S(s1, s2));
-//        long finalTime = System.nanoTime() - start;
-//        stosaverage += finalTime;
-//    }
+    @Test
+    void testS2S2() throws IOException {
+        long start = System.nanoTime();
+        WGraph wg = new WGraph("example.txt");
+        ArrayList<Integer> solution = new ArrayList<Integer>();
+        ArrayList<Integer> s1 = new ArrayList<Integer>();
+        s1.add(4);
+        s1.add(4);
+        ArrayList<Integer> s2 = new ArrayList<Integer>();
+        s2.add(5);
+        s2.add(6);
+        s2.add(3);
+        s2.add(4);
+        s2.add(4);
+        s2.add(4);
+        solution.add(4);
+        solution.add(4);
+        assertEquals(solution, wg.S2S(s1, s2));
+        long finalTime = System.nanoTime() - start;
+        stosaverage += finalTime;
+    }
 
     @Test
     void testS2S3() throws IOException {
@@ -339,10 +341,28 @@ public class P1tests {
         stosaverage += finalTime;
     }
 
+    @Test
+    void testS2S6() throws IOException {
+        long start = System.nanoTime();
+        WGraph wg = new WGraph("example.txt");
+        ArrayList<Integer> solution = new ArrayList<Integer>();
+        ArrayList<Integer> s1 = new ArrayList<Integer>();
+        s1.add(4);
+        s1.add(4);
+        ArrayList<Integer> s2 = new ArrayList<Integer>();
+        s2.add(5);
+        s2.add(6);
+        s2.add(3);
+        s2.add(4);
+        assertEquals(solution, wg.S2S(s1, s2));
+        long finalTime = System.nanoTime() - start;
+        stosaverage += finalTime;
+    }
+
     @AfterAll
     static void getAverage() {
         System.out.println("V2V average runtime was: " + vtovaverage/6 + " ns");
         System.out.println("S2V average runtime was: " + stovaverage/5 + " ns");
-        System.out.println("S2S average runtime was: " + stosaverage/5 + " ns");
+        System.out.println("S2S average runtime was: " + stosaverage/6 + " ns");
     }
 }
