@@ -4,6 +4,9 @@ public class Node {
 
     private int X;
     private int Y;
+    private int R;
+    private int G;
+    private int B;
     private int distance;
     private Node previous;
 
@@ -15,6 +18,15 @@ public class Node {
         weight = new ArrayList<>();
         X = x;
         Y = y;
+    }
+
+    public Node(int x, int y, int r, int g, int b){
+        X = x;
+        Y = y;
+        R = r;
+        G = g;
+        B = b;
+
     }
 
     /**
