@@ -2,6 +2,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 /**
@@ -12,8 +13,6 @@ import java.util.Scanner;
 public class ImageProcessor {
     private int H;
     private int W;
-
-    private boolean flag;
 
     private Node[][] M;
     private WGraph G;
@@ -35,7 +34,6 @@ public class ImageProcessor {
      */
     public ImageProcessor(String FName) throws FileNotFoundException {
         PIXELLIST = new ArrayList<>();
-        flag = false;
 
         if( !FName.contains(".txt") ){              //Check to see if file has .txt at end
             FName = FName.concat(".txt");           //If not add it then continue
@@ -83,7 +81,6 @@ public class ImageProcessor {
      * @return the 2-D matrix I as per its definition
      */
     ArrayList<ArrayList<Integer>> getImportance() {
-        flag = true;
         ArrayList<ArrayList<Integer>> out = new ArrayList<>();
         ArrayList<Integer> row = new ArrayList<>();
 
@@ -116,30 +113,50 @@ public class ImageProcessor {
      * @param FName String containing the file name to use
      */
     void writeReduced(int k, String FName) {
+        ArrayList<Integer> S1 = new ArrayList<>();
+        ArrayList<Integer> S2 = new ArrayList<>();
+        ArrayList<Integer> S2Sout = new ArrayList<>();
+
         if( !FName.contains(".txt") ){              //Check to see if file has .txt at end
             FName = FName.concat(".txt");           //If not add it then continue
         }
-        if( !flag )                                 //Make sure the importance has been calculated before
-            getImportance();                        //If not get it
 
-//        Node[][] pixles = new Node[H][W];
-//        for( Node n : PIXELLIST ) {                 //Add all of the nodes to pixles 2D array
-//            int x = n.getX();
-//            int y = n.getY();
-//            pixles[y][x] = getPixel(x, y);
-//        }
+        getImportance();
 
-        G = new WGraph(PIXELLIST, H, W, I);                          //Make a WGraph object of the picture Node array
+        G = new WGraph(PIXELLIST, H, W, I);         //Make a WGraph object of the picture Node array
 
-0
+        for( int i = 0; i < W; i++ ) {              //S1 = x & y values for top row of image
+            Node p = getPixel(i, 0);
+            int x = p.getX();
+            int y = p.getY();
 
+            S1.add(x);
+            S1.add(y);
+        }
+
+        for( int i = 0; i < W; i++ ) {             //S2 = x & y values for bottom row of image
+            Node p = getPixel(i, H-1);
+            int x = p.getX();
+            int y = p.getY();
+
+            S2.add(x);
+            S2.add(y);
+        }
+
+        S2Sout = G.S2S(S1, S2);
+        System.out.println("\n" + "S2S " + " Size: " + S2Sout.size() + " #Nodes: " + S2Sout.size()/2 + " " + Arrays.toString(S2Sout.toArray()) );
         return;
     }
 
     /* HELPER METHODS */
 
-    private void cost() {
+    private ArrayList<Node> intListToNodeList(ArrayList<Integer> S) {
+        ArrayList<Node> list = new ArrayList<>();
 
+        for( int i = 0; i < S.size(); i += 2) {
+            list.add( getPixel(S.get(0), S.get(i+1)) );
+        }
+        return list;
     }
 
     private double Importance(int x, int y) {

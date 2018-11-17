@@ -24,6 +24,7 @@ public class Node {
         X = x;
         Y = y;
         R = B = G = -1;
+        setImportance(-1);
     }
 
     public Node(int x, int y, int r, int g, int b){
