@@ -141,16 +141,23 @@ public class WGraph {
             Node src = getNode(ux, uy);
             Node dest = getNode(vx, vy);
 
-            dijkstra(src);
+            if( src.equals(dest) ) {                //If the source node is also the dest then quit
+                path = new ArrayList<>();
+                path.add(src.getX());
+                path.add(src.getY());
+                return path;
+            }else if( src.getVisibleNodes().size() > 0 ) {
+                dijkstra(src);
 
-            System.out.print("\n" + dest.toString());
-            previous.add(dest);
-            createPreviousNodes(dest);
-            System.out.print( "Size: " + previous.size());
-            //convert to integer arraylist & reverse direction of previous list
-            for( int i = previous.size()-1; i >= 0; i--) {
-                path.add(previous.get(i).getX());
-                path.add(previous.get(i).getY());
+                System.out.print("\n" + dest.toString());
+                previous.add(dest);
+                createPreviousNodes(dest);
+                System.out.print( "Size: " + previous.size());
+                //convert to integer arraylist & reverse direction of previous list
+                for( int i = previous.size()-1; i >= 0; i--) {
+                    path.add(previous.get(i).getX());
+                    path.add(previous.get(i).getY());
+                }
             }
         }
         return path;
@@ -172,7 +179,6 @@ public class WGraph {
      *      in the returned path (path is an ordered sequence of vertices)
      */
     ArrayList<Integer> V2S(int ux, int uy, ArrayList<Integer> S) {
-        //TODO reimplement by using V2V
         ArrayList<ArrayList<Integer>> V2Vout = new ArrayList<>();
         ArrayList<Integer> path = new ArrayList<>();
 
@@ -182,7 +188,8 @@ public class WGraph {
 
         int minDistance = V2Vout.get(0).size()/2;
         for( int i = 0; i < V2Vout.size(); i++ ) {
-            if( V2Vout.get(i).size()/2 <= minDistance ) {
+            int min = V2Vout.get(i).size()/2;
+            if( minDistance == 0 || min <= minDistance ) {
                 minDistance = V2Vout.get(i).size()/2;
                 path = V2Vout.get(i);
             }
@@ -243,13 +250,26 @@ public class WGraph {
         ArrayList<ArrayList<Integer>> V2Sout = new ArrayList<>();
         ArrayList<Integer> path = new ArrayList<>();
 
+//        ArrayList<Node> nodesS1 = new ArrayList<>();
+//        for( int i = 0; i < S1.size(); i += 2 ) {
+//            nodesS1.add( getNode(S1.get(i),S1.get(i+1)) );
+//        }
+//
+//        ArrayList<Node> nodesS2 = new ArrayList<>();
+//        for( int i = 0; i < S2.size(); i += 2 ) {
+//            nodesS2.add( getNode(S2.get(i),S2.get(i+1)) );
+//        }
+//
+//        for( Node n :  )
+
         for( int i = 0; i < S1.size(); i += 2 ) {
             V2Sout.add(V2S(S1.get(i), S1.get(i+1), S2));
         }
 
         int minDistance = V2Sout.get(0).size()/2;
         for( int i = 0; i < V2Sout.size(); i++ ) {
-            if( V2Sout.get(i).size()/2 <= minDistance ) {
+            int min = V2Sout.get(i).size()/2;
+            if( minDistance == 0 || min <= minDistance ) {
                 minDistance = V2Sout.get(i).size()/2;
                 path = V2Sout.get(i);
             }
@@ -288,22 +308,17 @@ public class WGraph {
 
             ArrayList<Node> visibleNodesOfU = U.getVisibleNodes();
 
-            if( visibleNodesOfU.size() > 0 ) {
-                for( Node v : visibleNodesOfU ) {
-                    if( Q.contains(v) ) {
-                        int uDist = getNode(U).getDistance();
-                        int distanceBetween = getNode(U).getDistanceBetween(v);
-                        int alt = uDist + distanceBetween;
-                        if( alt < getNode(v).getDistance() ) {
-                            getNode(v).setDistance(alt);
-                            getNode(v).setPrevious(U);
-                        }
+            for( Node v : visibleNodesOfU ) {
+                if( Q.contains(v) ) {
+                    int uDist = getNode(U).getDistance();
+                    int distanceBetween = getNode(U).getDistanceBetween(v);
+                    int alt = uDist + distanceBetween;
+                    if( alt < getNode(v).getDistance() ) {
+                        getNode(v).setDistance(alt);
+                        getNode(v).setPrevious(U);
                     }
                 }
-            }else{
-                return;
             }
-
         }
     }
 
@@ -332,7 +347,7 @@ public class WGraph {
         int min = Q.get(0).getDistance(), minIndex = 0;
 
         for( int i = 0; i < Q.size(); i++ ) {
-            Node n = Q.get(i);             //Make sure distance is updated
+            Node n = Q.get(i);
             if( n.getDistance() < min ) {
                 min = n.getDistance();
                 minIndex = i;
