@@ -4,29 +4,36 @@ public class Node {
 
     private int X;
     private int Y;
-    private int R;
-    private int G;
-    private int B;
+
     private int distance;
     private Node previous;
 
     private ArrayList<Node> visibleNodes;
     private ArrayList<Integer> weight;
 
+    private int R;
+    private int G;
+    private int B;
+
+    private double importance;
+
+
     public Node(int x, int y) {
         visibleNodes = new ArrayList<>();
         weight = new ArrayList<>();
         X = x;
         Y = y;
+        R = B = G = -1;
     }
 
     public Node(int x, int y, int r, int g, int b){
+        visibleNodes = new ArrayList<>();
+        weight = new ArrayList<>();
         X = x;
         Y = y;
         R = r;
         G = g;
         B = b;
-
     }
 
     /**
@@ -100,11 +107,15 @@ public class Node {
         previous = src;
     }
 
+    public int getDistance() {return distance;}
+
     public void setDistance(int d) {
         distance = d;
     }
 
-    public int getDistance() {return distance;}
+    public int getImportance() { return (int) Math.round(importance); }
+
+    public void setImportance(double d) { importance = d; }
 
     /**
      * @return X coordinate of this node
@@ -118,6 +129,18 @@ public class Node {
      */
     public int getY() {
         return Y;
+    }
+
+    public int getR() {
+        return R;
+    }
+
+    public int getG() {
+        return G;
+    }
+
+    public int getB() {
+        return B;
     }
 
     /**
@@ -145,8 +168,10 @@ public class Node {
     public String toString() {
         if( X == -1 && Y == -1 )
             return "{X}   ";
-        else
+        else if( (R + G + B) == -3 )            //RGB values not set
             return "{" + X + "," + Y + "} ";
+        else
+            return "{" + R + "," + G + "," + B + "} ";
     }
 
     void info() {
@@ -156,7 +181,7 @@ public class Node {
             return;
         }
         for( int i = 0; i < visibleNodes.size(); i++ ) {
-            System.out.print( visibleNodes.get(i).toString() + " W: " + weight.get(i) + " | ");
+            System.out.print( visibleNodes.get(i).toString() /*+ " W: " + weight.get(i)*/ + " | ");
         }
         System.out.println();
     }

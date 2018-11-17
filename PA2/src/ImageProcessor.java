@@ -7,10 +7,20 @@ import java.util.Scanner;
 /**
  * @author Peter DeBisschop (pjd), Kyle Zelnio (kjzelnio)
  */
-
+//TODO comments
+//TODO Clean up file (Delete unneeded comments)
 public class ImageProcessor {
-    private int V;
-    private int E;
+    private int H;
+    private int W;
+
+    private boolean flag;
+
+    private Node[][] M;
+    private WGraph G;
+    private int[][] I;
+
+    private ArrayList<Node> PIXELLIST;
+
     /**
      * Reads the file from FName from the same directory
      * to obtain the data related to pixels of some image.
@@ -24,6 +34,8 @@ public class ImageProcessor {
      * @param FName String containing the file name to use
      */
     public ImageProcessor(String FName) throws FileNotFoundException {
+        PIXELLIST = new ArrayList<>();
+        flag = false;
 
         if( !FName.contains(".txt") ){              //Check to see if file has .txt at end
             FName = FName.concat(".txt");           //If not add it then continue
@@ -33,17 +45,17 @@ public class ImageProcessor {
         File file = new File(url.getPath());
 
         Scanner sc = new Scanner(file);
-        String s;
 
-        //Get the first 2 lines of the file & store them into V & E
-       // s = sc.nextLine();
-        V = sc.nextInt();
-       // s = sc.nextLine();
-        E = sc.nextInt();
-        System.out.println("Vertices = " + V + "\tEdges = " + E);
-        Node picture[][] = new Node[V][E];
+        //Get the first 2 lines of the file & store them into H & W
+        H = sc.nextInt();
+        W = sc.nextInt();
+        System.out.println("Height = " + H + "\tWidth = " + W);
+
+        M = new Node[H][W];
+        I = new int[H][W];
         int x = 0;
         int y = 0;
+
         sc.nextLine();
         while(sc.hasNextLine()) {
             Scanner sc_line = new Scanner(sc.nextLine());
@@ -52,17 +64,16 @@ public class ImageProcessor {
                 int this_g = sc_line.nextInt();
                 int this_b = sc_line.nextInt();
 
-                Node a = new Node(x, y, this_r, this_g, this_b);
-                picture[y][x] = a;
-                x = x + 1;
+                addPixel(x, y, this_r, this_g, this_b);
+                x += 1;
             }
             sc_line.close();
             x = 0;
-            y = y + 1;
-
+            y += 1;
         }
         sc.close();
 
+        printPixels();
     }
 
     /**
@@ -72,14 +83,24 @@ public class ImageProcessor {
      * @return the 2-D matrix I as per its definition
      */
     ArrayList<ArrayList<Integer>> getImportance() {
-        int array_importance[][] = new int[V][E];
-        for(int i = 0; i < V; i++){
-            for(int j = 0; j<E; j++){
-                /// compute the importance number
-                /// toss it int array of importance
+        flag = true;
+        ArrayList<ArrayList<Integer>> out = new ArrayList<>();
+        ArrayList<Integer> row = new ArrayList<>();
+
+        for(int i = 0; i < H; i++){
+            for(int j = 0; j < W; j++){
+                Node p = getPixel(j, i);
+                double importance = Importance(j, i);
+                p.setImportance(importance);
+                I[i][j] = p.getImportance();
+                row.add(p.getImportance());
             }
+            out.add(i, row);
+            row = new ArrayList<>();
         }
-        return null;
+        printImportance();
+
+        return out;
     }
 
     /**
@@ -95,6 +116,112 @@ public class ImageProcessor {
      * @param FName String containing the file name to use
      */
     void writeReduced(int k, String FName) {
+        if( !FName.contains(".txt") ){              //Check to see if file has .txt at end
+            FName = FName.concat(".txt");           //If not add it then continue
+        }
+        if( !flag )                                 //Make sure the importance has been calculated before
+            getImportance();                        //If not get it
+
+//        Node[][] pixles = new Node[H][W];
+//        for( Node n : PIXELLIST ) {                 //Add all of the nodes to pixles 2D array
+//            int x = n.getX();
+//            int y = n.getY();
+//            pixles[y][x] = getPixel(x, y);
+//        }
+
+        G = new WGraph(PIXELLIST, H, W, I);                          //Make a WGraph object of the picture Node array
+
+0
+
         return;
+    }
+
+    /* HELPER METHODS */
+
+    private void cost() {
+
+    }
+
+    private double Importance(int x, int y) {
+        double xI = XImportance(x, y);
+        double yI = YImportance(x, y);
+        return  xI + yI;
+    }
+
+    private double YImportance(int x, int y) {
+        if( y == 0 ) {
+            Node p = getPixel(x, H-1);
+            Node q = getPixel(x, y+1);
+            return PDist(p, q);
+        }else if( y == H-1 ) {
+            Node p = getPixel(x, y-1);
+            Node q = getPixel(x, 0);
+            return PDist(p, q);
+        }else{
+            Node p = getPixel(x, y-1);
+            Node q = getPixel(x, y+1);
+            return PDist(p, q);
+        }
+    }
+
+    private double XImportance(int x, int y) {
+        if( x == 0 ) {
+            Node p = getPixel(W-1, y);
+            Node q = getPixel(x+1, y);
+            return PDist(p, q);
+        }else if( x == W-1 ) {
+            Node p = getPixel(x-1, y);
+            Node q = getPixel(0 ,y);
+            return PDist(p, q);
+        }else{
+            Node p = getPixel(x-1, y);
+            Node q = getPixel(x+1, y);
+            return PDist(p, q);
+        }
+    }
+
+    private double PDist(Node p, Node q) {
+        return Math.pow((p.getR() - q.getR()), 2)
+                + Math.pow((p.getG() - q.getG()), 2)
+                + Math.pow((p.getB() - q.getB()), 2);
+    }
+
+    private void addPixel(int x, int y, int r, int g, int b) {
+        M[y][x] = new Node(x, y, r, g, b);
+        PIXELLIST.add(M[y][x]);
+    }
+
+    private Node getPixel(int x, int y) {
+        return M[y][x];
+    }
+
+    private void printImportance() {
+        System.out.println("IMPORTANCE 2D Array (START)");
+        for(int i = H-1; i >= 0; i--) {
+            System.out.print(i + " ");
+            for(int j = 0; j < W; j++) {
+                System.out.print( M[i][j].getImportance() + "\t");
+            }
+            System.out.println();
+        }
+        for(int i = 0; i < W; i++){
+            System.out.print("     " + i + " ");
+        }
+        System.out.println();
+    }
+
+    private void printPixels() {
+        System.out.println("PIXELS 2D Array (START)");
+        for(int i = H-1; i >= 0; i--) {
+            System.out.print(i + " ");
+            for(int j = 0; j < W; j++) {
+                System.out.print( M[i][j].toString() );
+            }
+            System.out.println();
+        }
+        for(int i = 0; i < W; i++){
+            System.out.print("       " + i + "    ");
+        }
+        System.out.println();
     }
 }
