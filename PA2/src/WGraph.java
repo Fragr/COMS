@@ -8,8 +8,7 @@ import java.util.Scanner;
 /**
  * @author Peter DeBisschop (pjd), Kyle Zelnio (kjzelnio)
  */
-//TODO Clean up file (Delete unneeded comments)
-//TODO Add comments where needed
+
 public class WGraph {
 
     private int V;
@@ -19,7 +18,9 @@ public class WGraph {
 
     private Node[][] NODES;
     private ArrayList<Node> NODELIST;
+    private int[][] I;
     private ArrayList<Node> previous;
+    ArrayList<Integer> cost;
 
     /**
      * Reads the file from FName from the same directory
@@ -53,7 +54,6 @@ public class WGraph {
         V = Integer.parseInt(s);
         s = sc.nextLine();
         E = Integer.parseInt(s);
-        System.out.println("Vertices = " + V + "\tEdges = " + E);
 
         int srcX[] = new int[E+1];
         int srcY[] = new int[E+1];
@@ -72,17 +72,6 @@ public class WGraph {
             count++;
         }
 
-//        System.out.print("srcX: ");
-//        printArray(srcX);
-//        System.out.print("srcY: ");
-//        printArray(srcY);
-//        System.out.print("destX: ");
-//        printArray(destX);
-//        System.out.print("destY: ");
-//        printArray(destY);
-//        System.out.print("weight: ");
-//        printArray(weight);
-
         int maxX[] = new int[2];                                                                //Array that holds max X values from srcX and destX
         int maxY[] = new int[2];                                                                //Array that holds max Y values from srcY and destY
         maxX[0] = findMax(srcX);                                                                //Finds max value of srcX values
@@ -93,8 +82,6 @@ public class WGraph {
         ROWS = findMax(maxX)+1;                                                                 //Finds max X/ROWS value of the max values from srcX & destX
         COLUMNS = findMax(maxY)+1;                                                              //Finds max Y/COLUMNS value of the max values from srcY & destY
 
-//        System.out.println("Max X=" + ROWS + " Max Y=" + COLUMNS);
-
         NODES = new Node[COLUMNS][ROWS];                                                        //Creates the NODES 2D array that will hold the graph nodes based on x & y coordinates
         initNodes();                                                                            //Initializes the NODES array with default NODES
 
@@ -103,23 +90,39 @@ public class WGraph {
             addNode(destX[i], destY[i]);                                                        //Add destination vertices to NODES
             getNode(srcX[i], srcY[i]).createEdge(getNode(destX[i],destY[i]), weight[i]);        //Creates an edge between the src and dest nodes
         }
+    }
 
-        printNodes(1);                                                                       //Print nodes from NODES 2D array
-        printNodes(0);                                                                       //Print nodes from NODELIST
+    /**
+     * Takes as input the 2D node array of pixels from ImageProcessor constructor.
+     * This way you can use the methods in this class on the 2D array of pixels
+     * @param pixels
+     * @param H
+     * @param W
+     */
+    public WGraph(ArrayList<Node> pixels, int H, int W, int[][] I) {
+        NODELIST = new ArrayList<>();
+        previous = new ArrayList<>();
+        cost = new ArrayList<>();
+        this.I = I;
 
-//        getNode(1,2).info();        //Prints the nodes visible to this node and the weight between them
-//        getNode(3,4).info();
-//        getNode(5,6).info();
-//        getNode(7,8).info();
-//
-//        getNode(1,2).getVisibleNodes().get(0).getVisibleNodes().get(0).info();
+        COLUMNS = H;
+        ROWS = W;
 
-//        getNode(1,2).checkWeight(getNode(3,4));           //Prints the weight between these two nodes
-//
-//        getNode(1,2).checkVisibilty(getNode(3,4));      //Checks if the 1st node can see the 2nd
+        NODES = new Node[H][W];
+        for( Node p : pixels ) {
+            addNode(p);
+        }
 
-//        V2V(1,1, 3, 10);
+        //For every node in the first row add, recursively,
+        //the node downLeft, down, downRight to the visible
+        //node list of that node
+        for( int i = 0; i < ROWS; i++ ) {
+            Node p = getNode(i, 0);
+            int x = p.getX();
+            int y = p.getY();
 
+            visibleNodes(p);
+        }
     }
 
     /**
@@ -148,15 +151,15 @@ public class WGraph {
                 return path;
             }else if( src.getVisibleNodes().size() > 0 ) {
                 dijkstra(src);
-
-                System.out.print("\n" + dest.toString());
                 previous.add(dest);
                 createPreviousNodes(dest);
-                System.out.print( "Size: " + previous.size());
+
                 //convert to integer arraylist & reverse direction of previous list
+                int cost = 0;
                 for( int i = previous.size()-1; i >= 0; i--) {
-                    path.add(previous.get(i).getX());
-                    path.add(previous.get(i).getY());
+                    int x = previous.get(i).getX(); int y = previous.get(i).getY();
+                    path.add(x);
+                    path.add(y);
                 }
             }
         }
@@ -186,53 +189,27 @@ public class WGraph {
             V2Vout.add(V2V(ux, uy, S.get(i), S.get(i+1)));
         }
 
-        int minDistance = V2Vout.get(0).size()/2;
-        for( int i = 0; i < V2Vout.size(); i++ ) {
-            int min = V2Vout.get(i).size()/2;
-            if( minDistance == 0 || min <= minDistance ) {
-                minDistance = V2Vout.get(i).size()/2;
-                path = V2Vout.get(i);
+        int minImportance = 0; int minDistance = 0;
+        if( cost != null ) {                                        //Find the lowest cost from V2Vout
+            minImportance = cost(V2Vout.get(0));
+            for( int i = 0; i < V2Vout.size(); i++ ) {
+                int min = cost(V2Vout.get(i));
+                if( min <= minImportance ) {
+                    minImportance = min;
+                    path = V2Vout.get(i);
+                }
+            }
+        }else{
+            minDistance = V2Vout.get(0).size()/2;
+            for( int i = 0; i < V2Vout.size(); i++ ) {
+                int min = V2Vout.get(i).size()/2;
+                if( minDistance == 0 || min <= minDistance ) {
+                    minDistance = min;
+                    path = V2Vout.get(i);
+                }
             }
         }
         return path;
-//        if( ux < ROWS &&  uy < COLUMNS ){
-//            Node src = getNode(ux, uy);
-//            dijkstra(src);
-//
-//            ArrayList<Node> dest = new ArrayList<>();
-//            for( int i = 0; i < S.size(); i += 2 ) {        //Take the x & y values from S & put them into a Node arraylist
-//                int x = S.get(i);
-//                int y = S.get(i+1);
-//                dest.add(getNode(x, y));
-//            }
-//
-//            //For each node from S, check the distance back to src node
-//            int[] distance = new int[dest.size()];          //Array that holds distance from src to dest
-//            int index = 0;
-//            for( Node n :  dest ) {
-//                System.out.print(n.toString());
-//                previous.add(n);
-//                createPreviousNodes(n);
-//                System.out.print( "Size: " + previous.size() + "\n");
-//                distance[index] = previous.size();          //Save the distance from src to n @ index
-//                index++;
-//                previous = new ArrayList<>();
-//            }
-//
-//            int minIndex = findMinIndex(distance);          //Find which node in S has the smallest path size from src
-//
-//            System.out.print(dest.get(minIndex).toString());
-//            previous.add(dest.get(minIndex));
-//            createPreviousNodes(dest.get(minIndex));
-//            System.out.print( "Size: " + previous.size() + "\n");
-//
-//            //convert to integer arraylist & reverse direction of previous list
-//            for( int i = previous.size()-1; i >= 0; i--) {
-//                path.add(previous.get(i).getX());
-//                path.add(previous.get(i).getY());
-//            }
-//        }
-//        return path;
     }
 
     /**
@@ -250,35 +227,49 @@ public class WGraph {
         ArrayList<ArrayList<Integer>> V2Sout = new ArrayList<>();
         ArrayList<Integer> path = new ArrayList<>();
 
-//        ArrayList<Node> nodesS1 = new ArrayList<>();
-//        for( int i = 0; i < S1.size(); i += 2 ) {
-//            nodesS1.add( getNode(S1.get(i),S1.get(i+1)) );
-//        }
-//
-//        ArrayList<Node> nodesS2 = new ArrayList<>();
-//        for( int i = 0; i < S2.size(); i += 2 ) {
-//            nodesS2.add( getNode(S2.get(i),S2.get(i+1)) );
-//        }
-//
-//        for( Node n :  )
-
         for( int i = 0; i < S1.size(); i += 2 ) {
             V2Sout.add(V2S(S1.get(i), S1.get(i+1), S2));
         }
 
-        int minDistance = V2Sout.get(0).size()/2;
-        for( int i = 0; i < V2Sout.size(); i++ ) {
-            int min = V2Sout.get(i).size()/2;
-            if( minDistance == 0 || min <= minDistance ) {
-                minDistance = V2Sout.get(i).size()/2;
-                path = V2Sout.get(i);
+        int minImportance = 0; int minDistance = 0;
+        if( cost != null ) {                                        //Find the lowest cost from V2Sout
+            minImportance = cost(V2Sout.get(0));
+            for( int i = 0; i < V2Sout.size(); i++ ) {
+                int min = cost(V2Sout.get(i));
+                if( min <= minImportance ) {
+                    minImportance = min;
+                    path = V2Sout.get(i);
+                }
+            }
+        }else{
+            minDistance = V2Sout.get(0).size()/2;
+            for( int i = 0; i < V2Sout.size(); i++ ) {
+                int min = V2Sout.get(i).size()/2;
+                if( minDistance == 0 || min <= minDistance ) {
+                    minDistance = min;
+                    path = V2Sout.get(i);
+                }
             }
         }
-
         return path;
     }
 
-    /* HELPER METHODS */
+    /* Q1 HELPER METHODS */
+
+    /**
+     * From the input Node it recursively goes to each previous
+     * node until there is no previous node. While doing this it
+     * also prints them out to visually see.
+     *
+     * @param n Node to start getting previous nodes at
+     */
+    private void createPreviousNodes(Node n) {
+        if( n.getPrevious().exists() ) {
+            previous.add(n.getPrevious());
+            //System.out.print("-> " + n.getPrevious().toString() /*+ " W=" + n.getDistance() + " "*/);
+            createPreviousNodes(n.getPrevious());
+        }
+    }
 
     /**
      * From the source node it finds the shortest path to ALL
@@ -322,6 +313,122 @@ public class WGraph {
         }
     }
 
+    private void initNodes() {
+        for(int i = 0; i < COLUMNS; i++) {
+            for(int j = 0; j < ROWS; j++) {
+                NODES[i][j] = new Node(-1, -1);
+            }
+        }
+    }
+
+    /* Q2 HELPER METHODS */
+
+    protected int cost(ArrayList<Integer> S) {
+        int cost = 0;
+        for( int i = 0; i < S.size(); i += 2 ) {
+            int x = S.get(i); int y = S.get(i+1);
+            cost += getNode(x, y).getImportance();
+        }
+        return cost;
+    }
+
+    protected void cut(ArrayList<Node> S) {
+        //Remove nodes in S from NODELIST then recreate the NODES 2D array and chnage x & y values
+        for( Node s : S ) {
+            if( NODELIST.contains(s) )
+                NODELIST.remove(s);
+        }
+        S = new ArrayList<>();
+
+        for( Node p : NODELIST )    S.add(p);
+
+        ROWS = ROWS - 1;
+        NODES = new Node[COLUMNS][ROWS];
+        NODELIST = new ArrayList<>();
+        int H = 0; int W = 0;
+        for( Node p : S ) {
+            if( W == ROWS ) {
+                W = 0;
+                H++;
+            }
+            p.setX(W);
+            p.setY(H);
+            addNode(p);
+            W++;
+        }
+    }
+
+    protected void updateI(int[][] I) {
+        this.I = new int[COLUMNS][ROWS];
+        for(int i = 0; i < COLUMNS; i++) {
+            for(int j = 0; j < ROWS; j++) {
+                this.I[i][j] = I[i][j];
+                getNode(j, i).setImportance(I[i][j]);
+            }
+        }
+
+        //For every node in the first row add, recursively,
+        //the node downLeft, down, downRight to the visible
+        //node list of that node
+        for( int i = 0; i < ROWS; i++ ) {
+            Node p = getNode(i, 0);
+            int x = p.getX();
+            int y = p.getY();
+
+            visibleNodes(p);
+        }
+    }
+
+    private void visibleNodes(Node p) {
+        int x = p.getX(); int y = p.getY();
+        p.clearVisibleNodes();
+
+        Node dest1; Node dest2; Node dest3;
+        int importance;
+        if( y < COLUMNS-1 ) {
+            if( x == 0 ) {
+                dest1 = getNode(x, y+1);                     //Get node down
+                importance = dest1.getImportance();
+                p.createEdge( dest1, importance );
+                dest2 = getNode(x+1, y+1);               //Get node down right
+                importance = dest2.getImportance();
+                p.createEdge( dest2, importance );
+                visibleNodes(dest1);
+                visibleNodes(dest2);
+            }else if( x >= 1 && x < ROWS-1 ) {
+                dest1 = getNode(x, y+1);                     //Get node down
+                importance = dest1.getImportance();
+                p.createEdge( dest1, importance );
+                dest2 = getNode(x+1, y+1);               //Get node down right
+                importance = dest2.getImportance();
+                p.createEdge( dest2, importance );
+                dest3 = getNode(x-1, y+1);               //get node down left
+                importance = dest3.getImportance();
+                p.createEdge( dest3, importance );
+                visibleNodes(dest1);
+                visibleNodes(dest2);
+                visibleNodes(dest3);
+            }else if( x == ROWS-1 ) {
+                dest1 = getNode(x, y+1);                     //Get node down
+                importance = dest1.getImportance();
+                p.createEdge( dest1, importance );
+                dest2 = getNode(x-1, y+1);               //Get node down left
+                importance = dest2.getImportance();
+                p.createEdge( dest2, importance );
+                visibleNodes(dest1);
+                visibleNodes(dest2);
+            }
+        }
+    }
+
+    protected int getROWS() { return ROWS; }
+
+    protected int getCOLUMNS() { return COLUMNS; }
+
+    protected ArrayList<Node> getNODELIST() { return NODELIST; }
+
+    /* HELPER METHODS */
+
     private int findMax(int [] a) {
         int max = a[0];
         for(int i = 1; i < a.length; i++){
@@ -329,18 +436,6 @@ public class WGraph {
                 max = a[i];
         }
         return max;
-    }
-
-    private int findMinIndex(int [] a) {
-        int min = a[0];
-        int minIndex = 0;
-        for(int i = 1; i < a.length; i++){
-            if( a[i] < min ) {
-                min = a[i];
-                minIndex = i;
-            }
-        }
-        return minIndex;
     }
 
     private int getMinDistance(ArrayList<Node> Q) {
@@ -356,6 +451,12 @@ public class WGraph {
         return minIndex;
     }
 
+    private void addNode(Node n) {
+        I[n.getY()][n.getX()] = n.getImportance();
+        NODES[n.getY()][n.getX()] = n;
+        NODELIST.add(NODES[n.getY()][n.getX()]);
+    }
+
     private void addNode(int x, int y) {
         //Check to see if the node already exists in the NODELIST
         for(Node n : NODELIST){
@@ -369,46 +470,21 @@ public class WGraph {
         NODELIST.add(NODES[y][x]);                  //Adds node to NODELIST
     }
 
-    private Node getNode(Node n) {
+    protected Node getNode(Node n) {
         return NODES[n.getY()][n.getX()];
     }
 
-    private Node getNode(int x, int y) {
+    protected Node getNode(int x, int y) {
         return NODES[y][x];
-    }
-
-    public ArrayList<Node> getNODELIST() { return NODELIST; }
-
-    /**
-     * From the input Node it recursively goes to each previous
-     * node until there is no previous node. While doing this it
-     * also prints them out to visually see.
-     *
-     * @param n Node to start getting previous nodes at
-     */
-    private void createPreviousNodes(Node n) {
-        if( n.getPrevious().exists() ) {
-            previous.add(n.getPrevious());
-            System.out.print("-> " + n.getPrevious().toString() /*+ " W=" + n.getDistance() + " "*/);
-            createPreviousNodes(n.getPrevious());
-        }
-    }
-
-    private void initNodes() {
-        for(int i = 0; i < COLUMNS; i++) {
-            for(int j = 0; j < ROWS; j++) {
-                NODES[i][j] = new Node(-1, -1);
-            }
-        }
     }
 
     /**
      * Prints the nodes
      * @param v if 1 print from NODES 2D array. if 0 print from NODELIST
      */
-    private void printNodes(int v) {
+    public void printNodes(int v) {
         if( v == 1) {
-            System.out.println("NODES 2D Array (START)");
+            System.out.println("\nNODES 2D Array (START)");
             for(int i = COLUMNS-1; i >= 0; i--) {
                 System.out.print(i + " ");
                 for(int j = 0; j < ROWS; j++) {
@@ -426,6 +502,15 @@ public class WGraph {
                 System.out.print( NODELIST.get(i).toString() );
             }
             System.out.println();
+        }else if( v == -1 ) {
+            System.out.println("PIXELS 2D Array (START)");
+            for(int i = 0; i < COLUMNS; i++) {
+                //System.out.print(i + " ");
+                for(int j = 0; j < ROWS; j++) {
+                    System.out.print( NODES[i][j].toString() );
+                }
+                System.out.println();
+            }
         }
 
     }
