@@ -1,14 +1,12 @@
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Scanner;
 
 /**
  * @author Peter DeBisschop (pjd), Kyle Zelnio (kjzelnio)
  */
-//TODO comments
-//TODO Clean up file (Delete unneeded comments)
+
 public class ImageProcessor {
     private int H;
     private int W;
@@ -46,7 +44,7 @@ public class ImageProcessor {
         //Get the first 2 lines of the file & store them into H & W
         H = sc.nextInt();
         W = sc.nextInt();
-        System.out.println("Height = " + H + "\tWidth = " + W);
+//        System.out.println("Height = " + H + "\tWidth = " + W);
 
         M = new Node[H][W];
         I = new int[H][W];
@@ -69,8 +67,6 @@ public class ImageProcessor {
             y += 1;
         }
         sc.close();
-
-        //printPixels();
     }
 
     /**
@@ -95,8 +91,6 @@ public class ImageProcessor {
             out.add(i, row);
             row = new ArrayList<>();
         }
-        //printImportance();
-
         return out;
     }
 
@@ -129,7 +123,6 @@ public class ImageProcessor {
         int count = 0;
         while( count < k ) {
             S1 = new ArrayList<>(); S2 = new ArrayList<>(); S2Sout = new ArrayList<>();
-            //getImportance();
 
             for( int i = 0; i < W; i++ ) {              //S1 = x & y values for top row of image
                 Node p = G.getNode(i, 0);
@@ -155,29 +148,38 @@ public class ImageProcessor {
             for( int i = 0; i < S2Sout.size(); i += 2 ) {                   //Convert S2Sout path to path of Nodes
                 pixelsToCut.add( getPixel(S2Sout.get(i), S2Sout.get(i+1)) );
             }
-
-            //Cut those nodes in W graph
-            System.out.println("\nImage before " + count + " cut:");
-            G.printNodes(-1);
-            System.out.println("Importance Matrix before " + count + " cut:");
-            printImportance();
-            System.out.println("Min cut before " + count + " cut\n" + Arrays.toString(S2Sout.toArray()));
-
-            G.cut(pixelsToCut);
-            setM(G.getNODELIST(), G.getCOLUMNS(), G.getROWS());
+//            System.out.println("\nImage before " + count + " cut:");
+//            G.printNodes(-1);
+//            System.out.println("Importance Matrix before " + count + " cut:");
+//            printImportance();
+//            System.out.println("Min cut before " + count + " cut\n" + Arrays.toString(S2Sout.toArray()));
+            G.cut(pixelsToCut);                                             //Cut those nodes in W graph
+            setM(G.getNODELIST(), G.getCOLUMNS(), G.getROWS());             //Update current global variables in Imageprocessor
             getImportance();
             G.updateI(I);
             count++;
         }
         writeToFile(G.getNODELIST(), FName);
-        System.out.println("\nImage After " + count + " cut:");
-        G.printNodes(-1);
-        System.out.println("Importance Matrix After " + count + " cut:");
-        printImportance();
-        //System.out.println("Min cut After " + count + " cut\n" + Arrays.toString(S2Sout.toArray()));
+//        System.out.println("\nImage After " + count + " cut:");
+//        G.printNodes(-1);
+//        System.out.println("Importance Matrix After " + count + " cut:");
+//        printImportance();
 
-        M = tempM; I = tempI; PIXELLIST = tempPIXELLIST; W = tempW;
+        W = tempW;
+        M = new Node[H][W]; PIXELLIST = new ArrayList<>();
+        int x = 0; int y = 0;
 
+        int H = 0; int W = 0;
+        for( Node p : tempPIXELLIST ) {
+            if( W == this.W ) {
+                W = 0;
+                H++;
+            }
+            p.setX(W);
+            p.setY(H);
+            addPixel(p);
+            W++;
+        }
         return;
     }
 
@@ -307,18 +309,3 @@ public class ImageProcessor {
         System.out.println();
     }
 }
-/*
-
-        System.out.println("PIXELS 2D Array (START)");
-                for(int i = H-1; i >= 0; i--) {
-                System.out.print(i + " ");
-                for(int j = 0; j < W; j++) {
-        System.out.print( M[i][j].toString() );
-        }
-        System.out.println();
-        }
-        for(int i = 0; i < W; i++){
-        System.out.print("       " + i + "    ");
-        }
-        System.out.println();
-        }*/

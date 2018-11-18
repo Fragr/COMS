@@ -15,6 +15,7 @@ public class PJTest {
 
         Node src = NODELIST.get(i);
         Node dest = NODELIST.get(j);
+        g.printNodes(1);
         System.out.print("\nSRC: " + src.toString() + "DEST: " + dest.toString());
 
         ArrayList<Integer> path;

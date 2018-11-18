@@ -10,5 +10,7 @@ public class B_test {
         //ArrayList<ArrayList<Integer>> importance = I.getImportance();
         //importance.size();
         I.writeReduced(8, "output.txt");
+        I.writeReduced(7,"output1.txt");
+        I.writeReduced(1, "output2.txt");
     }
 }

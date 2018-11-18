@@ -8,7 +8,7 @@ import java.io.IOException;
 public class main {
 
     public static void main(String args[]) throws IOException {
-        B_test.test();
-//        PJTest.test();
+//        B_test.test();
+        PJTest.test();
     }
 }
