@@ -1,5 +1,4 @@
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -71,7 +70,7 @@ public class ImageProcessor {
         }
         sc.close();
 
-        printPixels();
+        //printPixels();
     }
 
     /**
@@ -83,6 +82,7 @@ public class ImageProcessor {
     ArrayList<ArrayList<Integer>> getImportance() {
         ArrayList<ArrayList<Integer>> out = new ArrayList<>();
         ArrayList<Integer> row = new ArrayList<>();
+        I = new int[H][W];
 
         for(int i = 0; i < H; i++){
             for(int j = 0; j < W; j++){
@@ -95,7 +95,7 @@ public class ImageProcessor {
             out.add(i, row);
             row = new ArrayList<>();
         }
-        printImportance();
+        //printImportance();
 
         return out;
     }
@@ -112,53 +112,94 @@ public class ImageProcessor {
      * @param k
      * @param FName String containing the file name to use
      */
-    void writeReduced(int k, String FName) {
-        ArrayList<Integer> S1 = new ArrayList<>();
-        ArrayList<Integer> S2 = new ArrayList<>();
-        ArrayList<Integer> S2Sout = new ArrayList<>();
+    void writeReduced(int k, String FName) throws IOException {
+        ArrayList<Integer> S1; ArrayList<Integer> S2; ArrayList<Integer> S2Sout;
 
         if( !FName.contains(".txt") ){              //Check to see if file has .txt at end
             FName = FName.concat(".txt");           //If not add it then continue
         }
 
-        
-
         getImportance();
 
         G = new WGraph(PIXELLIST, H, W, I);         //Make a WGraph object of the picture Node array
 
-        for( int i = 0; i < W; i++ ) {              //S1 = x & y values for top row of image
-            Node p = getPixel(i, 0);
-            int x = p.getX();
-            int y = p.getY();
+        ArrayList<Node> tempPIXELLIST = PIXELLIST;
+        int tempW = W; Node[][] tempM = M; int[][] tempI = I;
 
-            S1.add(x);
-            S1.add(y);
+        int count = 0;
+        while( count < k ) {
+            S1 = new ArrayList<>(); S2 = new ArrayList<>(); S2Sout = new ArrayList<>();
+            //getImportance();
+
+            for( int i = 0; i < W; i++ ) {              //S1 = x & y values for top row of image
+                Node p = G.getNode(i, 0);
+                int x = p.getX();
+                int y = p.getY();
+
+                S1.add(x);
+                S1.add(y);
+            }
+
+            for( int i = 0; i < W; i++ ) {             //S2 = x & y values for bottom row of image
+                Node p = G.getNode(i, H-1);
+                int x = p.getX();
+                int y = p.getY();
+
+                S2.add(x);
+                S2.add(y);
+            }
+
+            S2Sout = G.S2S(S1, S2);                     //Get shortest path/what path to cut
+
+            ArrayList<Node> pixelsToCut = new ArrayList<>();
+            for( int i = 0; i < S2Sout.size(); i += 2 ) {                   //Convert S2Sout path to path of Nodes
+                pixelsToCut.add( getPixel(S2Sout.get(i), S2Sout.get(i+1)) );
+            }
+
+            //Cut those nodes in W graph
+            System.out.println("\nImage before " + count + " cut:");
+            G.printNodes(-1);
+            System.out.println("Importance Matrix before " + count + " cut:");
+            printImportance();
+            System.out.println("Min cut before " + count + " cut\n" + Arrays.toString(S2Sout.toArray()));
+
+            G.cut(pixelsToCut);
+            setM(G.getNODELIST(), G.getCOLUMNS(), G.getROWS());
+            getImportance();
+            G.updateI(I);
+            count++;
         }
+        writeToFile(G.getNODELIST(), FName);
+        System.out.println("\nImage After " + count + " cut:");
+        G.printNodes(-1);
+        System.out.println("Importance Matrix After " + count + " cut:");
+        printImportance();
+        //System.out.println("Min cut After " + count + " cut\n" + Arrays.toString(S2Sout.toArray()));
 
-        for( int i = 0; i < W; i++ ) {             //S2 = x & y values for bottom row of image
-            Node p = getPixel(i, H-1);
-            int x = p.getX();
-            int y = p.getY();
+        M = tempM; I = tempI; PIXELLIST = tempPIXELLIST; W = tempW;
 
-            S2.add(x);
-            S2.add(y);
-        }
-
-        S2Sout = G.S2S(S1, S2);
-
-        ArrayList<Node> pixelsToCut = new ArrayList<>();
-        for( int i = 0; i < S2Sout.size(); i += 2 ) {
-            pixelsToCut.add( getPixel(S2Sout.get(i), S2Sout.get(i+1)) );
-        }
-
-        G.cut(pixelsToCut);
-
-        System.out.println("\n" + "S2S " + " Size: " + S2Sout.size() + " #Nodes: " + S2Sout.size()/2 + " " + Arrays.toString(S2Sout.toArray()) );
         return;
     }
 
     /* HELPER METHODS */
+
+    private void writeToFile(ArrayList<Node> NODELIST, String FName) throws IOException {
+        PrintWriter writer = new PrintWriter( FName, "UTF-8" );
+
+        writer.println(H); writer.println(W);
+
+        for( int i = 0; i < NODELIST.size(); i++ ) {
+            Node p = NODELIST.get(i);
+            writer.print( p.getR() + " " + p.getG() + " " + p.getB() + " ");
+            if( p.getX() == W-1 ) {
+                writer.println();
+            }
+
+        }
+
+        writer.close();
+
+    }
 
     private double Importance(int x, int y) {
         double xI = XImportance(x, y);
@@ -204,6 +245,13 @@ public class ImageProcessor {
                 + Math.pow((p.getB() - q.getB()), 2);
     }
 
+    private void addPixel(Node p) {
+        int x = p.getX(); int y = p.getY(); int r = p.getR();
+        int g = p.getG(); int b = p.getB();
+        M[y][x] = new Node(x, y, r, g, b);
+        PIXELLIST.add(M[y][x]);
+    }
+
     private void addPixel(int x, int y, int r, int g, int b) {
         M[y][x] = new Node(x, y, r, g, b);
         PIXELLIST.add(M[y][x]);
@@ -213,9 +261,25 @@ public class ImageProcessor {
         return M[y][x];
     }
 
+    /**
+     * Using the current NODELIST inside WGraph G
+     * update M[][] to contain these values
+     * @param NODELIST current NODELIST of WGraph G
+     */
+    private void setM(ArrayList<Node> NODELIST, int columns, int rows) {
+        PIXELLIST = new ArrayList<>();
+        H = columns;
+        W = rows;
+        M = new Node[H][W];
+
+        for( Node p : NODELIST ) {
+            addPixel(p);
+        }
+    }
+
     private void printImportance() {
         System.out.println("IMPORTANCE 2D Array (START)");
-        for(int i = H-1; i >= 0; i--) {
+        for(int i = 0; i < H; i++) {
             System.out.print(i + " ");
             for(int j = 0; j < W; j++) {
                 System.out.print( M[i][j].getImportance() + "\t");
@@ -223,23 +287,38 @@ public class ImageProcessor {
             System.out.println();
         }
         for(int i = 0; i < W; i++){
-            System.out.print("     " + i + " ");
+            System.out.print("\t\t" + i + " ");
         }
         System.out.println();
     }
 
     private void printPixels() {
         System.out.println("PIXELS 2D Array (START)");
-        for(int i = H-1; i >= 0; i--) {
-            System.out.print(i + " ");
+        for(int i = 0; i < H; i++) {
+            //System.out.print(i + " ");
             for(int j = 0; j < W; j++) {
                 System.out.print( M[i][j].toString() );
             }
             System.out.println();
         }
         for(int i = 0; i < W; i++){
-            System.out.print("       " + i + "    ");
+            //System.out.print("       " + i + "    ");
         }
         System.out.println();
     }
 }
+/*
+
+        System.out.println("PIXELS 2D Array (START)");
+                for(int i = H-1; i >= 0; i--) {
+                System.out.print(i + " ");
+                for(int j = 0; j < W; j++) {
+        System.out.print( M[i][j].toString() );
+        }
+        System.out.println();
+        }
+        for(int i = 0; i < W; i++){
+        System.out.print("       " + i + "    ");
+        }
+        System.out.println();
+        }*/

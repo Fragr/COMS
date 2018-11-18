@@ -120,6 +120,11 @@ public class Node {
 
     public void setX(int x) { X = x; }
 
+    public void clearVisibleNodes() {
+        visibleNodes = new ArrayList<>();
+        weight = new ArrayList<>();
+    }
+
     /**
      * @return X coordinate of this node
      */
@@ -176,7 +181,7 @@ public class Node {
         else if( (R + G + B) == -3 )            //RGB values not set
             return "{" + X + "," + Y + "} ";
         else
-            return "{" + R + "," + G + "," + B + "} ";
+            return "[" + R + " " + G + " " + B + "]\t";
     }
 
     void info() {
