@@ -362,6 +362,42 @@ public class WGraph {
         return cost;
     }
 
+    public void cut(ArrayList<Node> S) {
+        //Remove nodes in S from NODELIST then recreate the NODES 2D array and chnage x & y values
+        for( Node s : S ) {
+            if( NODELIST.contains(s) )
+                NODELIST.remove(s);
+        }
+        S = new ArrayList<>();
+
+        for( Node p : NODELIST )    S.add(p);
+
+        NODES = new Node[COLUMNS][ROWS-1];
+        int H = 0; int W = 0;
+        for( Node p : S ) {
+            if( W == ROWS-1 ) {
+                W = 0;
+                H++;
+            }
+            p.setX(W);
+            p.setY(H);
+            addNode(p);
+            W++;
+        }
+
+        ROWS = ROWS - 1;
+        //For every node in the first row add, recursively,
+        //the node downLeft, down, downRight to the visible
+        //node list of that node
+        for( int i = 0; i < ROWS; i++ ) {
+            Node p = getNode(i, 0);
+            int x = p.getX();
+            int y = p.getY();
+
+            visibleNodes(p);
+        }
+    }
+
     public void updateI(int[][] I) {
         for(int i = 0; i < COLUMNS; i++) {
             for(int j = 0; j < ROWS; j++) {
@@ -467,7 +503,7 @@ public class WGraph {
      * Prints the nodes
      * @param v if 1 print from NODES 2D array. if 0 print from NODELIST
      */
-    private void printNodes(int v) {
+    public void printNodes(int v) {
         if( v == 1) {
             System.out.println("NODES 2D Array (START)");
             for(int i = COLUMNS-1; i >= 0; i--) {

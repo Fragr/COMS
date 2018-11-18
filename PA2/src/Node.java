@@ -118,12 +118,16 @@ public class Node {
 
     public void setImportance(double d) { importance = d; }
 
+    public void setX(int x) { X = x; }
+
     /**
      * @return X coordinate of this node
      */
     public int getX() {
         return X;
     }
+
+    public void setY(int y) { Y = y; }
 
     /**
      * @return Y coordinate of this node

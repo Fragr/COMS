@@ -121,6 +121,8 @@ public class ImageProcessor {
             FName = FName.concat(".txt");           //If not add it then continue
         }
 
+        
+
         getImportance();
 
         G = new WGraph(PIXELLIST, H, W, I);         //Make a WGraph object of the picture Node array
@@ -144,20 +146,19 @@ public class ImageProcessor {
         }
 
         S2Sout = G.S2S(S1, S2);
+
+        ArrayList<Node> pixelsToCut = new ArrayList<>();
+        for( int i = 0; i < S2Sout.size(); i += 2 ) {
+            pixelsToCut.add( getPixel(S2Sout.get(i), S2Sout.get(i+1)) );
+        }
+
+        G.cut(pixelsToCut);
+
         System.out.println("\n" + "S2S " + " Size: " + S2Sout.size() + " #Nodes: " + S2Sout.size()/2 + " " + Arrays.toString(S2Sout.toArray()) );
         return;
     }
 
     /* HELPER METHODS */
-
-    private ArrayList<Node> intListToNodeList(ArrayList<Integer> S) {
-        ArrayList<Node> list = new ArrayList<>();
-
-        for( int i = 0; i < S.size(); i += 2) {
-            list.add( getPixel(S.get(0), S.get(i+1)) );
-        }
-        return list;
-    }
 
     private double Importance(int x, int y) {
         double xI = XImportance(x, y);
