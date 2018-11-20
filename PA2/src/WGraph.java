@@ -5,9 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
-/**
- * @author Peter DeBisschop (pjd), Kyle Zelnio (kjzelnio)
- */
+
 
 public class WGraph {
 
@@ -313,6 +311,9 @@ public class WGraph {
         }
     }
 
+    /**
+     * Adds "empty/non-existent" nodes to the NODES 2D array
+     */
     private void initNodes() {
         for(int i = 0; i < COLUMNS; i++) {
             for(int j = 0; j < ROWS; j++) {
@@ -323,6 +324,13 @@ public class WGraph {
 
     /* Q2 HELPER METHODS */
 
+    /**
+     * For use with ImgageProcessor. Calculates the given cost
+     * for a path found by dijkstra.
+     *
+     * @param S The x, y list of nodes in the path
+     * @return the total cost of the path
+     */
     protected int cost(ArrayList<Integer> S) {
         int cost = 0;
         for( int i = 0; i < S.size(); i += 2 ) {
@@ -332,6 +340,11 @@ public class WGraph {
         return cost;
     }
 
+    /**
+     * Removes the nodes S from the 2D array and shrinks the 2D array after
+     *
+     * @param S The x, y list of nodes in the path to remove
+     */
     protected void cut(ArrayList<Node> S) {
         //Remove nodes in S from NODELIST then recreate the NODES 2D array and chnage x & y values
         for( Node s : S ) {
@@ -358,6 +371,13 @@ public class WGraph {
         }
     }
 
+    /**
+     * Updates the importance 2D array in WGraph.
+     * After it will go through each node in the 2D
+     * array and update their visible nodes
+     *
+     * @param I New importance values
+     */
     protected void updateI(int[][] I) {
         this.I = new int[COLUMNS][ROWS];
         for(int i = 0; i < COLUMNS; i++) {
@@ -379,6 +399,13 @@ public class WGraph {
         }
     }
 
+    /**
+     * Updates the visible nodes from the top (or 0th) row
+     * of the 2D nodes array. Each node has at most 3 visible
+     * nodes & at minimum 2.
+     *
+     * @param p Node to update visible nodes of
+     */
     private void visibleNodes(Node p) {
         int x = p.getX(); int y = p.getY();
         p.clearVisibleNodes();
@@ -421,14 +448,35 @@ public class WGraph {
         }
     }
 
+    /**
+     * Used by ImageProcessor
+     *
+     * @return the current value of ROWS
+     */
     protected int getROWS() { return ROWS; }
 
+    /**
+     * Used by ImageProcessor
+     *
+     * @return the current value of COLUMNS
+     */
     protected int getCOLUMNS() { return COLUMNS; }
 
+    /**
+     * Used by ImageProcessor
+     *
+     * @return the current NODELIST
+     */
     protected ArrayList<Node> getNODELIST() { return NODELIST; }
 
     /* HELPER METHODS */
 
+    /**
+     * Find the max value froma given input array.
+     *
+     * @param a int array
+     * @return which number in the array is the max
+     */
     private int findMax(int [] a) {
         int max = a[0];
         for(int i = 1; i < a.length; i++){
@@ -438,6 +486,13 @@ public class WGraph {
         return max;
     }
 
+    /**
+     * Find the index of the smallest distance from
+     * the given arraylist. Used by dijkstra
+     *
+     * @param Q Arraylist of nodes
+     * @return the index of the node with the smallest distance
+     */
     private int getMinDistance(ArrayList<Node> Q) {
         int min = Q.get(0).getDistance(), minIndex = 0;
 
@@ -451,12 +506,27 @@ public class WGraph {
         return minIndex;
     }
 
+    /**
+     * Adds a node to the NODES 2D array, I 2D array, and
+     * NODELIST. Used by ImageProcessor when creating a WGraph
+     * object.
+     *
+     * @param n Node to add
+     */
     private void addNode(Node n) {
         I[n.getY()][n.getX()] = n.getImportance();
         NODES[n.getY()][n.getX()] = n;
         NODELIST.add(NODES[n.getY()][n.getX()]);
     }
 
+    /**
+     * Used by original WGraph constructor. Adds a new
+     * node, based on x & y values to NODES 2D array
+     * and NODELIST.
+     *
+     * @param x x coordinate of node
+     * @param y y coordinate of node
+     */
     private void addNode(int x, int y) {
         //Check to see if the node already exists in the NODELIST
         for(Node n : NODELIST){
@@ -470,10 +540,19 @@ public class WGraph {
         NODELIST.add(NODES[y][x]);                  //Adds node to NODELIST
     }
 
+    /**
+     * @param n Node to return
+     * @return NODE at x & y coordinate of NODES 2D array
+     */
     protected Node getNode(Node n) {
         return NODES[n.getY()][n.getX()];
     }
 
+    /**
+     * @param x x coordinate of node
+     * @param y y coordinate of node
+     * @return node at the given x & y coorindate from NDOES 2D array
+     */
     protected Node getNode(int x, int y) {
         return NODES[y][x];
     }
@@ -515,10 +594,18 @@ public class WGraph {
 
     }
 
+    /**
+     * Print an int array to screen
+     * @param a int array to print
+     */
     private void printArray(int[] a) {
         System.out.println(Arrays.toString(a));
     }
 
+    /**
+     * Print an int 2D array to screen
+     * @param a int 2D array to print
+     */
     private void print2DArray(int[][] a) {
         System.out.println(Arrays.deepToString(a).replace("], ", "]\n"));
     }

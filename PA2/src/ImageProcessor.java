@@ -185,6 +185,16 @@ public class ImageProcessor {
 
     /* HELPER METHODS */
 
+    /**
+     * From the given input paramters it will print to a file the following information.
+     * Line 1: Height of 2D array
+     * Line 2: Width of 2D array
+     * All lines after: the RGB values for a given node in the 2D array
+     *
+     * @param NODELIST PIXEL/NODELIST to write to file
+     * @param FName File to write to
+     * @throws IOException
+     */
     private void writeToFile(ArrayList<Node> NODELIST, String FName) throws IOException {
         PrintWriter writer = new PrintWriter( FName, "UTF-8" );
 
@@ -203,12 +213,27 @@ public class ImageProcessor {
 
     }
 
+    /**
+     * Calculates the importance of a given node/pixel by calling
+     * XImportance & YImportance.
+     *
+     * @param x x coordinate of pixel/node
+     * @param y y coordinate of pixel/node
+     * @return XImportance + YImportance
+     */
     private double Importance(int x, int y) {
         double xI = XImportance(x, y);
         double yI = YImportance(x, y);
         return  xI + yI;
     }
 
+    /**
+     * Calculates the YImportance of a given node/pixel
+     *
+     * @param x x coordinate of node/pixel
+     * @param y y coordinate of node/pixel
+     * @return the PDist of two nodes
+     */
     private double YImportance(int x, int y) {
         if( y == 0 ) {
             Node p = getPixel(x, H-1);
@@ -225,6 +250,13 @@ public class ImageProcessor {
         }
     }
 
+    /**
+     * Calculates the XImportance of a given node/pixel
+     *
+     * @param x x coordinate of node/pixel
+     * @param y y coordinate of node/pixel
+     * @return the PDist of two nodes
+     */
     private double XImportance(int x, int y) {
         if( x == 0 ) {
             Node p = getPixel(W-1, y);
@@ -241,12 +273,24 @@ public class ImageProcessor {
         }
     }
 
+    /**
+     * Calculates the PDistance of 2 nodes/pixels
+     *
+     * @param p first node
+     * @param q second node
+     * @return the difference between (p.R - q.R)^2 + (p.G - q.G)^2 + (p.B - q.B)^2
+     */
     private double PDist(Node p, Node q) {
         return Math.pow((p.getR() - q.getR()), 2)
                 + Math.pow((p.getG() - q.getG()), 2)
                 + Math.pow((p.getB() - q.getB()), 2);
     }
 
+    /**
+     * Adds a node/pixel to the M 2D array and PIXELLIST
+     *
+     * @param p Node to add
+     */
     private void addPixel(Node p) {
         int x = p.getX(); int y = p.getY(); int r = p.getR();
         int g = p.getG(); int b = p.getB();
@@ -254,11 +298,25 @@ public class ImageProcessor {
         PIXELLIST.add(M[y][x]);
     }
 
+    /**
+     * Adds a node/pixel to the M 2D array and PIXELLISt
+     *
+     * @param x x coordinate of pixel/node
+     * @param y y coordinate of pixel/node
+     * @param r r value of pixel/node
+     * @param g g value of pixel/node
+     * @param b b value of pixel/node
+     */
     private void addPixel(int x, int y, int r, int g, int b) {
         M[y][x] = new Node(x, y, r, g, b);
         PIXELLIST.add(M[y][x]);
     }
 
+    /**
+     * @param x x coordinate of node/pixel
+     * @param y y coordinate of node/pixel
+     * @return pixel/node from M 2D array at the x & y coordinate
+     */
     private Node getPixel(int x, int y) {
         return M[y][x];
     }
@@ -279,6 +337,9 @@ public class ImageProcessor {
         }
     }
 
+    /**
+     * Prints the importance I[][] array to screen
+     */
     private void printImportance() {
         System.out.println("IMPORTANCE 2D Array (START)");
         for(int i = 0; i < H; i++) {
@@ -294,6 +355,9 @@ public class ImageProcessor {
         System.out.println();
     }
 
+    /**
+     * Prints the pixels M[][] array to screen
+     */
     private void printPixels() {
         System.out.println("PIXELS 2D Array (START)");
         for(int i = 0; i < H; i++) {
