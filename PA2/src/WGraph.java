@@ -138,19 +138,19 @@ public class WGraph {
      */
     ArrayList<Integer> V2V(int ux, int uy, int vx, int vy) {
         ArrayList<Integer> path = new ArrayList<>();
-        if( ux < ROWS &&  uy < COLUMNS && vx < ROWS && vy < COLUMNS ){
-            Node src = getNode(ux, uy);
-            Node dest = getNode(vx, vy);
+        if( ux < ROWS &&  uy < COLUMNS && vx < ROWS && vy < COLUMNS ){      //Make sure the coordinates are valid
+            Node src = getNode(ux, uy);                     //get the src node
+            Node dest = getNode(vx, vy);                    //get the dest node
 
-            if( src.equals(dest) ) {                //If the source node is also the dest then quit
+            if( src.equals(dest) ) {                        //If the source node is also the dest then quit
                 path = new ArrayList<>();
                 path.add(src.getX());
                 path.add(src.getY());
                 return path;
-            }else if( src.getVisibleNodes().size() > 0 ) {
-                dijkstra(src);
-                previous.add(dest);
-                createPreviousNodes(dest);
+            }else if( src.getVisibleNodes().size() > 0 ) {  //If the source node has nodes it can see
+                dijkstra(src);                                  //Call dijkstra on the source
+                previous.add(dest);                             //From the dest node work backwards
+                createPreviousNodes(dest);                      //to find all nodes in the path
 
                 //convert to integer arraylist & reverse direction of previous list
                 int cost = 0;
@@ -183,12 +183,12 @@ public class WGraph {
         ArrayList<ArrayList<Integer>> V2Vout = new ArrayList<>();
         ArrayList<Integer> path = new ArrayList<>();
 
-        for( int i = 0; i < S.size(); i += 2 ) {
-            V2Vout.add(V2V(ux, uy, S.get(i), S.get(i+1)));
+        for( int i = 0; i < S.size(); i += 2 ) {                    //Iterate through all vertices in S & call V2V
+            V2Vout.add(V2V(ux, uy, S.get(i), S.get(i+1)));          //on each
         }
 
         int minImportance = 0; int minDistance = 0;
-        if( cost != null ) {                                        //Find the lowest cost from V2Vout
+        if( cost != null ) {                                        //Find the lowest cost from V2Vout, used by ImageProcessor
             minImportance = cost(V2Vout.get(0));
             for( int i = 0; i < V2Vout.size(); i++ ) {
                 int min = cost(V2Vout.get(i));
@@ -198,10 +198,13 @@ public class WGraph {
                 }
             }
         }else{
-            minDistance = V2Vout.get(0).size()/2;
-            for( int i = 0; i < V2Vout.size(); i++ ) {
-                int min = V2Vout.get(i).size()/2;
-                if( minDistance == 0 || min <= minDistance ) {
+            int x = V2Vout.get(0).get( V2Vout.get(0).size()-2 ); int y = V2Vout.get(0).get( V2Vout.get(0).size()-1 ); Node n = getNode(x, y);
+            minDistance = n.getDistance();
+            for ( int i = 0;  i < V2Vout.size(); i++ ) {
+                x = V2Vout.get(i).get( V2Vout.get(i).size()-2 ); y = V2Vout.get(i).get( V2Vout.get(i).size()-1 );
+                n = getNode(x, y);
+                int min = n.getDistance();
+                if( min <= minDistance ) {
                     minDistance = min;
                     path = V2Vout.get(i);
                 }
@@ -218,19 +221,19 @@ public class WGraph {
      * @param S2 represents a set of vertices
      * @return arraylist contains even number of integers,
      *      for any even i, i-th and i+1-th integers in the array
-     *      represent the x-coordinate and y-coordinate of the i-th vertex
+     *      represent the x-coordinate and y-coordinate of the i/2-th vertex
      *      in the returned path (path is an ordered sequence of vertices)
      */
     ArrayList<Integer> S2S(ArrayList<Integer> S1, ArrayList<Integer> S2) {
         ArrayList<ArrayList<Integer>> V2Sout = new ArrayList<>();
         ArrayList<Integer> path = new ArrayList<>();
 
-        for( int i = 0; i < S1.size(); i += 2 ) {
-            V2Sout.add(V2S(S1.get(i), S1.get(i+1), S2));
+        for( int i = 0; i < S1.size(); i += 2 ) {                   //Iterate through all vertices in S1 & S2 calling V2S
+            V2Sout.add(V2S(S1.get(i), S1.get(i+1), S2));            //on each
         }
 
         int minImportance = 0; int minDistance = 0;
-        if( cost != null ) {                                        //Find the lowest cost from V2Sout
+        if( cost != null ) {                                        //Find the lowest cost from V2Sout, used by ImageProcessor
             minImportance = cost(V2Sout.get(0));
             for( int i = 0; i < V2Sout.size(); i++ ) {
                 int min = cost(V2Sout.get(i));
@@ -240,10 +243,13 @@ public class WGraph {
                 }
             }
         }else{
-            minDistance = V2Sout.get(0).size()/2;
-            for( int i = 0; i < V2Sout.size(); i++ ) {
-                int min = V2Sout.get(i).size()/2;
-                if( minDistance == 0 || min <= minDistance ) {
+            int x = V2Sout.get(0).get( V2Sout.get(0).size()-2 ); int y = V2Sout.get(0).get( V2Sout.get(0).size()-1 ); Node n = getNode(x, y);
+            minDistance = n.getDistance();
+            for ( int i = 0;  i < V2Sout.size(); i++ ) {
+                x = V2Sout.get(i).get( V2Sout.get(i).size()-2 ); y = V2Sout.get(i).get( V2Sout.get(i).size()-1 );
+                n = getNode(x, y);
+                int min = n.getDistance();
+                if( min <= minDistance ) {
                     minDistance = min;
                     path = V2Sout.get(i);
                 }
@@ -325,7 +331,7 @@ public class WGraph {
     /* Q2 HELPER METHODS */
 
     /**
-     * For use with ImgageProcessor. Calculates the given cost
+     * For use with ImageProcessor. Calculates the given cost
      * for a path found by dijkstra.
      *
      * @param S The x, y list of nodes in the path
@@ -336,6 +342,23 @@ public class WGraph {
         for( int i = 0; i < S.size(); i += 2 ) {
             int x = S.get(i); int y = S.get(i+1);
             cost += getNode(x, y).getImportance();
+        }
+        return cost;
+    }
+
+    /**
+     * For use with ImageProcessor. Calculates the given cost
+     * for a path found by dijkstra.
+     *
+     * @param S The x, y list of nodes in the path
+     * @return the total cost of the path
+     */
+    protected int distance(ArrayList<Integer> S) {
+        int cost = 0;
+        for( int i = 0; i < S.size(); i += 2 ) {
+            int x = S.get(i); int y = S.get(i+1);
+            Node n = getNode(x, y);
+            cost = n.getDistance();
         }
         return cost;
     }

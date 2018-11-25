@@ -107,8 +107,6 @@ public class ImageProcessor {
      * @param FName String containing the file name to use
      */
     void writeReduced(int k, String FName) throws IOException {
-        ArrayList<Integer> S1; ArrayList<Integer> S2; ArrayList<Integer> S2Sout;
-
         if( !FName.contains(".txt") ){              //Check to see if file has .txt at end
             FName = FName.concat(".txt");           //If not add it then continue
         }
@@ -117,29 +115,24 @@ public class ImageProcessor {
 
         G = new WGraph(PIXELLIST, H, W, I);         //Make a WGraph object of the picture Node array
 
-        ArrayList<Node> tempPIXELLIST = PIXELLIST;
-        int tempW = W; Node[][] tempM = M; int[][] tempI = I;
+        ArrayList<Node> tempPIXELLIST = PIXELLIST; int tempW = W; Node[][] tempM = M; int[][] tempI = I;
 
         int count = 0;
         while( count < k ) {
-            S1 = new ArrayList<>(); S2 = new ArrayList<>(); S2Sout = new ArrayList<>();
+            ArrayList<Integer> S1 = new ArrayList<>(); ArrayList<Integer> S2 = new ArrayList<>(); ArrayList<Integer> S2Sout = new ArrayList<>();
 
             for( int i = 0; i < W; i++ ) {              //S1 = x & y values for top row of image
                 Node p = G.getNode(i, 0);
-                int x = p.getX();
-                int y = p.getY();
+                int x = p.getX(); int y = p.getY();
 
-                S1.add(x);
-                S1.add(y);
+                S1.add(x); S1.add(y);
             }
 
             for( int i = 0; i < W; i++ ) {             //S2 = x & y values for bottom row of image
                 Node p = G.getNode(i, H-1);
-                int x = p.getX();
-                int y = p.getY();
+                int x = p.getX(); int y = p.getY();
 
-                S2.add(x);
-                S2.add(y);
+                S2.add(x); S2.add(y);
             }
 
             S2Sout = G.S2S(S1, S2);                     //Get shortest path/what path to cut
@@ -155,8 +148,8 @@ public class ImageProcessor {
 //            System.out.println("Min cut before " + count + " cut\n" + Arrays.toString(S2Sout.toArray()));
             G.cut(pixelsToCut);                                             //Cut those nodes in W graph
             setM(G.getNODELIST(), G.getCOLUMNS(), G.getROWS());             //Update current global variables in Imageprocessor
-            getImportance();
-            G.updateI(I);
+            getImportance();                                                //Recalculate the importance for the remaining pixels
+            G.updateI(I);                                                   //Update the importance values in WGraph object
             count++;
         }
         writeToFile(G.getNODELIST(), FName);
@@ -165,6 +158,7 @@ public class ImageProcessor {
 //        System.out.println("Importance Matrix After " + count + " cut:");
 //        printImportance();
 
+        //After the file has been written reinitialize the global variables to their initial state
         W = tempW;
         M = new Node[H][W]; PIXELLIST = new ArrayList<>();
         int x = 0; int y = 0;
