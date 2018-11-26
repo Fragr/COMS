@@ -200,15 +200,24 @@ public class WGraph {
         }else{
             int x = V2Vout.get(0).get( V2Vout.get(0).size()-2 ); int y = V2Vout.get(0).get( V2Vout.get(0).size()-1 ); Node n = getNode(x, y);
             minDistance = n.getDistance();
+            path = V2Vout.get(0);
             for ( int i = 0;  i < V2Vout.size(); i++ ) {
                 x = V2Vout.get(i).get( V2Vout.get(i).size()-2 ); y = V2Vout.get(i).get( V2Vout.get(i).size()-1 );
                 n = getNode(x, y);
                 int min = n.getDistance();
-                if( min <= minDistance ) {
+                if( min < minDistance ) {
                     minDistance = min;
                     path = V2Vout.get(i);
                 }
             }
+//            minDistance = V2Vout.get(0).size()/2;
+//            for( int i = 0; i < V2Vout.size(); i++ ) {
+//                int min = V2Vout.get(i).size()/2;
+//                if( minDistance == 0 || min <= minDistance ) {
+//                    minDistance = min;
+//                    path = V2Vout.get(i);
+//                }
+//            }
         }
         return path;
     }
@@ -245,15 +254,27 @@ public class WGraph {
         }else{
             int x = V2Sout.get(0).get( V2Sout.get(0).size()-2 ); int y = V2Sout.get(0).get( V2Sout.get(0).size()-1 ); Node n = getNode(x, y);
             minDistance = n.getDistance();
+            int minSize = V2Sout.get(0).size()/2;
+            path = V2Sout.get(0);
             for ( int i = 0;  i < V2Sout.size(); i++ ) {
                 x = V2Sout.get(i).get( V2Sout.get(i).size()-2 ); y = V2Sout.get(i).get( V2Sout.get(i).size()-1 );
                 n = getNode(x, y);
                 int min = n.getDistance();
+                int size = V2Sout.get(i).size()/2;
                 if( min <= minDistance ) {
                     minDistance = min;
+                    minSize = size;
                     path = V2Sout.get(i);
                 }
             }
+//            minDistance = V2Sout.get(0).size()/2;
+//            for( int i = 0; i < V2Sout.size(); i++ ) {
+//                int min = V2Sout.get(i).size()/2;
+//                if( minDistance == 0 || min <= minDistance ) {
+//                    minDistance = min;
+//                    path = V2Sout.get(i);
+//                }
+//            }
         }
         return path;
     }

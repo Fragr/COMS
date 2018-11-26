@@ -1,0 +1,47 @@
+Changes to V2S inside of else brackets (Lines 203-210):
+
+            /*NEW CODE*/
+            int x = V2Vout.get(0).get( V2Vout.get(0).size()-2 ); int y = V2Vout.get(0).get( V2Vout.get(0).size()-1 ); Node n = getNode(x, y);
+            minDistance = n.getDistance();
+            for ( int i = 0;  i < V2Vout.size(); i++ ) {
+                x = V2Vout.get(i).get( V2Vout.get(i).size()-2 ); y = V2Vout.get(i).get( V2Vout.get(i).size()-1 );
+                n = getNode(x, y);
+                int min = n.getDistance();
+                if( min <= minDistance ) {
+                    minDistance = min;
+                    path = V2Vout.get(i);
+                }
+            }
+            /*OLD CODE*/
+//            minDistance = V2Vout.get(0).size()/2;
+//            for( int i = 0; i < V2Vout.size(); i++ ) {
+//                int min = V2Vout.get(i).size()/2;
+//                if( minDistance == 0 || min <= minDistance ) {
+//                    minDistance = min;
+//                    path = V2Vout.get(i);
+//                }
+//            }
+
+Changes to S2S inside of else brackets (Lines 245-252):
+
+            /*NEW CODE*/
+            int x = V2Sout.get(0).get( V2Sout.get(0).size()-2 ); int y = V2Sout.get(0).get( V2Sout.get(0).size()-1 ); Node n = getNode(x, y);
+            minDistance = n.getDistance();
+            for ( int i = 0;  i < V2Sout.size(); i++ ) {
+                x = V2Sout.get(i).get( V2Sout.get(i).size()-2 ); y = V2Sout.get(i).get( V2Sout.get(i).size()-1 );
+                n = getNode(x, y);
+                int min = n.getDistance();
+                if( min <= minDistance ) {
+                    minDistance = min;
+                    path = V2Sout.get(i);
+                }
+            }
+            /*OLD CODE*/
+//            minDistance = V2Sout.get(0).size()/2;
+//            for( int i = 0; i < V2Sout.size(); i++ ) {
+//                int min = V2Sout.get(i).size()/2;
+//                if( minDistance == 0 || min <= minDistance ) {
+//                    minDistance = min;
+//                    path = V2Sout.get(i);
+//                }
+//            }
