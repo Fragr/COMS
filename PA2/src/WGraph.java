@@ -212,14 +212,6 @@ public class WGraph {
                     }
                 }
             }
-//            minDistance = V2Vout.get(0).size()/2;
-//            for( int i = 0; i < V2Vout.size(); i++ ) {
-//                int min = V2Vout.get(i).size()/2;
-//                if( minDistance == 0 || min <= minDistance ) {
-//                    minDistance = min;
-//                    path = V2Vout.get(i);
-//                }
-//            }
         }
         return path;
     }
@@ -268,14 +260,6 @@ public class WGraph {
                     }
                 }
             }
-//            minDistance = V2Sout.get(0).size()/2;
-//            for( int i = 0; i < V2Sout.size(); i++ ) {
-//                int min = V2Sout.get(i).size()/2;
-//                if( minDistance == 0 || min <= minDistance ) {
-//                    minDistance = min;
-//                    path = V2Sout.get(i);
-//                }
-//            }
         }
         return path;
     }
